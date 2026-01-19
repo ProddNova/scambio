@@ -1,0 +1,1636 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SpotSwap — Scambia spot in sicurezza</title>
+  <style>
+    :root{
+      --bg:#0a0e1a;
+      --bg-light:#131720;
+      --card:#1a1f2e;
+      --border:#2a3142;
+      --text:#e8eaf0;
+      --text-muted:#8a92a8;
+      --primary:#6366f1;
+      --primary-hover:#4f46e5;
+      --success:#10b981;
+      --warning:#f59e0b;
+      --danger:#ef4444;
+      --info:#3b82f6;
+      --radius:12px;
+      --shadow:0 4px 20px rgba(0,0,0,.3);
+    }
+    
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;overflow-x:hidden}
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+      color:var(--text);
+      background:var(--bg);
+      line-height:1.6;
+    }
+
+    /* LAYOUT */
+    header{
+      background:var(--bg-light);
+      border-bottom:1px solid var(--border);
+      position:sticky;
+      top:0;
+      z-index:100;
+    }
+    
+    .header-content{
+      max-width:1200px;
+      margin:0 auto;
+      padding:16px 20px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+    }
+    
+    .logo-area{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    
+    .logo{
+      width:44px;
+      height:44px;
+      background:linear-gradient(135deg,var(--primary),var(--info));
+      border-radius:10px;
+      display:grid;
+      place-items:center;
+      font-size:20px;
+      font-weight:900;
+    }
+    
+    .brand h1{
+      font-size:20px;
+      color:var(--text);
+    }
+    
+    .brand p{
+      font-size:12px;
+      color:var(--text-muted);
+    }
+
+    nav{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    
+    .nav-btn{
+      background:transparent;
+      border:1px solid var(--border);
+      color:var(--text);
+      padding:10px 16px;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:500;
+      transition:all .2s;
+      font-size:14px;
+      position:relative;
+    }
+    
+    .nav-btn:hover{
+      background:var(--card);
+      border-color:var(--primary);
+    }
+    
+    .nav-btn.active{
+      background:var(--primary);
+      border-color:var(--primary);
+      color:white;
+    }
+
+    .nav-btn .badge-count{
+      position:absolute;
+      top:-6px;
+      right:-6px;
+      background:var(--danger);
+      color:white;
+      border-radius:10px;
+      padding:2px 6px;
+      font-size:11px;
+      font-weight:700;
+      min-width:18px;
+      text-align:center;
+    }
+
+    .container{
+      max-width:1200px;
+      margin:0 auto;
+      padding:24px 20px;
+    }
+
+    /* CARDS */
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:24px;
+      margin-bottom:20px;
+    }
+
+    .spot-card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:20px;
+      cursor:pointer;
+      transition:all .2s;
+    }
+    
+    .spot-card:hover{
+      border-color:var(--primary);
+      transform:translateY(-2px);
+      box-shadow:var(--shadow);
+    }
+
+    .spot-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+      margin-bottom:12px;
+    }
+
+    .spot-title{
+      font-size:16px;
+      font-weight:600;
+      margin-bottom:6px;
+    }
+
+    .spot-meta{
+      font-size:13px;
+      color:var(--text-muted);
+    }
+
+    .spot-exchange{
+      background:var(--bg-light);
+      border:1px dashed var(--border);
+      border-radius:8px;
+      padding:12px;
+      margin:12px 0;
+      font-size:14px;
+    }
+
+    .spot-exchange-row{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .spot-exchange strong{
+      color:var(--primary);
+    }
+
+    .tags{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:12px;
+    }
+
+    /* BADGES */
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+      padding:4px 10px;
+      border-radius:6px;
+      font-size:12px;
+      font-weight:500;
+      border:1px solid;
+    }
+
+    .badge-primary{
+      background:rgba(99,102,241,.15);
+      border-color:var(--primary);
+      color:var(--primary);
+    }
+
+    .badge-success{
+      background:rgba(16,185,129,.15);
+      border-color:var(--success);
+      color:var(--success);
+    }
+
+    .badge-warning{
+      background:rgba(245,158,11,.15);
+      border-color:var(--warning);
+      color:var(--warning);
+    }
+
+    .badge-danger{
+      background:rgba(239,68,68,.15);
+      border-color:var(--danger);
+      color:var(--danger);
+    }
+
+    .badge-info{
+      background:rgba(59,130,246,.15);
+      border-color:var(--info);
+      color:var(--info);
+    }
+
+    /* BUTTONS */
+    .btn{
+      padding:10px 20px;
+      border-radius:8px;
+      border:1px solid;
+      font-weight:500;
+      cursor:pointer;
+      transition:all .2s;
+      font-size:14px;
+      text-align:center;
+      display:inline-block;
+    }
+
+    .btn-primary{
+      background:var(--primary);
+      border-color:var(--primary);
+      color:white;
+    }
+
+    .btn-primary:hover{
+      background:var(--primary-hover);
+    }
+
+    .btn-success{
+      background:var(--success);
+      border-color:var(--success);
+      color:white;
+    }
+
+    .btn-danger{
+      background:var(--danger);
+      border-color:var(--danger);
+      color:white;
+    }
+
+    .btn-ghost{
+      background:transparent;
+      border-color:var(--border);
+      color:var(--text);
+    }
+
+    .btn-ghost:hover{
+      background:var(--card);
+    }
+
+    .btn-lg{
+      padding:14px 28px;
+      font-size:16px;
+      width:100%;
+    }
+
+    .btn:disabled{
+      opacity:.5;
+      cursor:not-allowed;
+    }
+
+    /* FORMS */
+    .form-group{
+      margin-bottom:20px;
+    }
+
+    .form-label{
+      display:block;
+      font-weight:500;
+      margin-bottom:8px;
+      font-size:14px;
+      color:var(--text);
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea{
+      width:100%;
+      background:var(--bg-light);
+      border:1px solid var(--border);
+      color:var(--text);
+      padding:12px 14px;
+      border-radius:8px;
+      font-size:14px;
+      transition:all .2s;
+      font-family:inherit;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus{
+      outline:none;
+      border-color:var(--primary);
+    }
+
+    .form-textarea{
+      min-height:100px;
+      resize:vertical;
+    }
+
+    .form-hint{
+      font-size:12px;
+      color:var(--text-muted);
+      margin-top:6px;
+    }
+
+    .form-row{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+      gap:16px;
+    }
+
+    .checkbox-label{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      padding:14px;
+      background:var(--bg-light);
+      border:1px solid var(--border);
+      border-radius:8px;
+      cursor:pointer;
+    }
+
+    .checkbox-label input{
+      margin-top:3px;
+    }
+
+    /* GRID */
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+      gap:16px;
+    }
+
+    @media (max-width:768px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    /* FILTERS */
+    .filters{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:20px;
+      margin-bottom:20px;
+    }
+
+    /* ALERT */
+    .alert{
+      padding:16px;
+      border-radius:8px;
+      margin-bottom:20px;
+      border:1px solid;
+    }
+
+    .alert-info{
+      background:rgba(59,130,246,.1);
+      border-color:var(--info);
+      color:var(--text);
+    }
+
+    .alert-warning{
+      background:rgba(245,158,11,.1);
+      border-color:var(--warning);
+      color:var(--text);
+    }
+
+    .alert-success{
+      background:rgba(16,185,129,.1);
+      border-color:var(--success);
+      color:var(--text);
+    }
+
+    /* MODAL */
+    .modal-overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.7);
+      z-index:999;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    }
+
+    .modal-overlay.show{
+      display:flex;
+    }
+
+    .modal{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:24px;
+      max-width:600px;
+      width:100%;
+      max-height:90vh;
+      overflow-y:auto;
+    }
+
+    .modal-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:20px;
+    }
+
+    .modal-title{
+      font-size:20px;
+      font-weight:600;
+    }
+
+    .modal-close{
+      background:transparent;
+      border:none;
+      font-size:24px;
+      cursor:pointer;
+      color:var(--text-muted);
+      padding:0;
+      width:32px;
+      height:32px;
+    }
+
+    /* TRADE REQUEST */
+    .trade-request{
+      background:var(--bg-light);
+      border:1px solid var(--border);
+      border-radius:8px;
+      padding:16px;
+      margin-bottom:16px;
+    }
+
+    .trade-status{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 12px;
+      border-radius:6px;
+      font-size:13px;
+      font-weight:500;
+    }
+
+    .trade-status.pending{
+      background:rgba(245,158,11,.15);
+      color:var(--warning);
+    }
+
+    .trade-status.verifying{
+      background:rgba(59,130,246,.15);
+      color:var(--info);
+    }
+
+    .trade-status.accepted{
+      background:rgba(16,185,129,.15);
+      color:var(--success);
+    }
+
+    .trade-status.rejected{
+      background:rgba(239,68,68,.15);
+      color:var(--danger);
+    }
+
+    .spot-selector{
+      background:var(--bg-light);
+      border:1px solid var(--border);
+      border-radius:8px;
+      padding:12px;
+      margin-bottom:12px;
+      cursor:pointer;
+      transition:all .2s;
+    }
+
+    .spot-selector:hover{
+      border-color:var(--primary);
+    }
+
+    .spot-selector.selected{
+      border-color:var(--primary);
+      background:rgba(99,102,241,.1);
+    }
+
+    .spot-selector input[type="checkbox"]{
+      margin-right:10px;
+    }
+
+    /* COORDINATES REVEAL */
+    .coordinates-box{
+      background:var(--success);
+      color:white;
+      padding:16px;
+      border-radius:8px;
+      margin:16px 0;
+      font-family:monospace;
+      font-size:14px;
+    }
+
+    .coordinates-box strong{
+      display:block;
+      margin-bottom:8px;
+      font-size:16px;
+    }
+
+    /* TOAST */
+    .toast{
+      position:fixed;
+      bottom:24px;
+      right:24px;
+      background:var(--card);
+      border:1px solid var(--border);
+      color:var(--text);
+      padding:16px 20px;
+      border-radius:8px;
+      box-shadow:var(--shadow);
+      z-index:1000;
+      display:none;
+      min-width:250px;
+    }
+
+    .toast.show{display:block}
+
+    .toast.success{
+      border-color:var(--success);
+      background:rgba(16,185,129,.15);
+    }
+
+    .toast.error{
+      border-color:var(--danger);
+      background:rgba(239,68,68,.15);
+    }
+
+    /* UTILITY */
+    .hidden{display:none!important}
+    .text-center{text-align:center}
+    .text-muted{color:var(--text-muted)}
+    .mt-2{margin-top:16px}
+    .mb-2{margin-bottom:16px}
+    .flex{display:flex}
+    .flex-between{display:flex;justify-content:space-between;align-items:center}
+    .gap-2{gap:16px}
+
+    h2{
+      font-size:24px;
+      margin-bottom:8px;
+    }
+
+    h3{
+      font-size:18px;
+      margin-bottom:12px;
+    }
+
+    .section-header{
+      margin-bottom:20px;
+    }
+
+    .empty-state{
+      text-align:center;
+      padding:48px 24px;
+      color:var(--text-muted);
+    }
+
+    .empty-state-icon{
+      font-size:48px;
+      margin-bottom:16px;
+      opacity:.5;
+    }
+
+    /* TABS */
+    .tabs{
+      display:flex;
+      gap:8px;
+      margin-bottom:20px;
+      border-bottom:1px solid var(--border);
+    }
+
+    .tab{
+      padding:12px 20px;
+      background:transparent;
+      border:none;
+      color:var(--text-muted);
+      cursor:pointer;
+      border-bottom:2px solid transparent;
+      transition:all .2s;
+      font-weight:500;
+    }
+
+    .tab:hover{
+      color:var(--text);
+    }
+
+    .tab.active{
+      color:var(--primary);
+      border-bottom-color:var(--primary);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width:768px){
+      .header-content{
+        flex-direction:column;
+        align-items:stretch;
+      }
+      
+      nav{
+        justify-content:center;
+      }
+      
+      .form-row{
+        grid-template-columns:1fr;
+      }
+
+      .toast{
+        left:20px;
+        right:20px;
+        bottom:20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header>
+    <div class="header-content">
+      <div class="logo-area">
+        <div class="logo">SS</div>
+        <div class="brand">
+          <h1>SpotSwap</h1>
+          <p>Scambia spot in sicurezza</p>
+        </div>
+      </div>
+
+      <nav>
+        <button class="nav-btn active" data-route="market">
+          Mercato
+        </button>
+        <button class="nav-btn" data-route="requests">
+          Richieste
+          <span class="badge-count hidden" id="requests-count">0</span>
+        </button>
+        <button class="nav-btn" data-route="my-spots">
+          I miei spot
+        </button>
+        <button class="nav-btn" data-route="new">
+          + Nuovo
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="container">
+    <!-- MARKET VIEW -->
+    <section id="view-market">
+      <div class="alert alert-info">
+        <strong>✅ Solo accessi legali</strong> — Pubblica solo spot con permesso ufficiale, tour organizzato o area pubblica. Niente coordinate fino all'accordo!
+      </div>
+
+      <div class="section-header">
+        <h2>Mercato degli scambi</h2>
+        <p class="text-muted">Trova spot e proponi uno scambio offrendo i tuoi</p>
+      </div>
+
+      <div class="filters">
+        <div class="form-row">
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Cerca</label>
+            <input type="text" class="form-input" id="filter-search" placeholder="es. hotel, fabbrica...">
+          </div>
+          
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Accesso</label>
+            <select class="form-select" id="filter-access">
+              <option value="all">Tutti</option>
+              <option value="permesso">Con permesso</option>
+              <option value="tour">Tour guidato</option>
+              <option value="pubblico">Pubblico</option>
+            </select>
+          </div>
+          
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Categoria</label>
+            <select class="form-select" id="filter-category">
+              <option value="all">Tutte</option>
+              <option value="industriale">Industriale</option>
+              <option value="hotel">Hotel</option>
+              <option value="villa">Villa</option>
+              <option value="sanitario">Sanitario</option>
+              <option value="militare">Militare</option>
+              <option value="altro">Altro</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex gap-2 mt-2" style="align-items:center">
+          <button class="btn btn-ghost" id="btn-reset-filters">Reset</button>
+          <span class="badge badge-primary" id="results-count">0 risultati</span>
+        </div>
+      </div>
+
+      <div class="grid" id="market-grid"></div>
+    </section>
+
+    <!-- REQUESTS VIEW -->
+    <section id="view-requests" class="hidden">
+      <div class="section-header">
+        <h2>Richieste di scambio</h2>
+        <p class="text-muted">Gestisci le richieste ricevute e inviate</p>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="received">Ricevute <span id="received-count">(0)</span></button>
+        <button class="tab" data-tab="sent">Inviate <span id="sent-count">(0)</span></button>
+      </div>
+
+      <div id="tab-received">
+        <div id="received-requests"></div>
+      </div>
+
+      <div id="tab-sent" class="hidden">
+        <div id="sent-requests"></div>
+      </div>
+    </section>
+
+    <!-- MY SPOTS VIEW -->
+    <section id="view-my-spots" class="hidden">
+      <div class="section-header flex-between">
+        <div>
+          <h2>I miei spot</h2>
+          <p class="text-muted">Gestisci i tuoi spot pubblicati</p>
+        </div>
+        <button class="btn btn-primary" onclick="showView('new')">+ Nuovo spot</button>
+      </div>
+
+      <div class="grid" id="my-spots-grid"></div>
+    </section>
+
+    <!-- NEW SPOT VIEW -->
+    <section id="view-new" class="hidden">
+      <div class="section-header">
+        <h2>Pubblica nuovo spot</h2>
+        <p class="text-muted">Crea un annuncio per scambiare il tuo spot</p>
+      </div>
+
+      <div class="card">
+        <div class="form-group">
+          <label class="form-label">Cosa offri</label>
+          <input type="text" class="form-input" id="input-give" maxlength="100" placeholder="es. Ex fabbrica tessile con permesso comunale">
+          <div class="form-hint">Descrizione breve dello spot che offri in scambio</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Cosa cerchi</label>
+          <input type="text" class="form-input" id="input-want" maxlength="100" placeholder="es. Hotel o villa abbandonata">
+          <div class="form-hint">Cosa vorresti ricevere in cambio</div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Zona generica</label>
+            <input type="text" class="form-input" id="input-region" placeholder="es. Lombardia nord">
+            <div class="form-hint">Solo zona generica, mai l'indirizzo</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Tipo di accesso</label>
+            <select class="form-select" id="input-access">
+              <option value="permesso">Con permesso</option>
+              <option value="tour">Tour guidato</option>
+              <option value="pubblico">Pubblico</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Categoria</label>
+            <select class="form-select" id="input-category">
+              <option value="industriale">Industriale</option>
+              <option value="hotel">Hotel</option>
+              <option value="villa">Villa</option>
+              <option value="sanitario">Sanitario</option>
+              <option value="militare">Militare</option>
+              <option value="altro">Altro</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Coordinate GPS</label>
+          <input type="text" class="form-input" id="input-coordinates" placeholder="es. 45.4642, 9.1900">
+          <div class="form-hint">⚠️ Saranno visibili SOLO dopo l'accettazione dello scambio e verifica admin</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Descrizione</label>
+          <textarea class="form-textarea" id="input-description" maxlength="500" placeholder="Descrivi cosa rende speciale questo spot..."></textarea>
+          <div class="form-hint">Info generali. Niente istruzioni per entrare illegalmente</div>
+        </div>
+
+        <label class="checkbox-label">
+          <input type="checkbox" id="input-legal">
+          <span>
+            <strong>Confermo</strong> che questo spot ha <strong>accesso legale e consentito</strong> 
+            (permesso ufficiale, tour organizzato o area pubblica) e fornirò coordinate solo dopo verifica.
+          </span>
+        </label>
+
+        <div class="flex gap-2 mt-2">
+          <button class="btn btn-ghost" onclick="showView('my-spots')">Annulla</button>
+          <button class="btn btn-primary btn-lg" id="btn-publish">Pubblica spot</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL: SELECT SPOTS TO OFFER -->
+  <div class="modal-overlay" id="modal-offer">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Scegli spot da offrire (max 3)</h3>
+        <button class="modal-close" onclick="closeModal('modal-offer')">&times;</button>
+      </div>
+
+      <div class="alert alert-info">
+        Seleziona fino a 3 tuoi spot da offrire in cambio. Il proprietario sceglierà quale accettare.
+      </div>
+
+      <div id="offer-spots-list"></div>
+
+      <div class="flex gap-2 mt-2">
+        <button class="btn btn-ghost" onclick="closeModal('modal-offer')">Annulla</button>
+        <button class="btn btn-primary btn-lg" id="btn-send-offer">Invia proposta</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CHOOSE SPOT FROM OFFER -->
+  <div class="modal-overlay" id="modal-choose">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Scegli spot da ricevere</h3>
+        <button class="modal-close" onclick="closeModal('modal-choose')">&times;</button>
+      </div>
+
+      <div class="alert alert-info">
+        Scegli quale spot accettare in cambio del tuo
+      </div>
+
+      <div id="choose-spots-list"></div>
+
+      <div class="flex gap-2 mt-2">
+        <button class="btn btn-ghost" onclick="closeModal('modal-choose')">Annulla</button>
+        <button class="btn btn-success btn-lg" id="btn-accept-trade">Accetta scambio</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: SPOT DETAIL -->
+  <div class="modal-overlay" id="modal-detail">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="detail-title"></h3>
+        <button class="modal-close" onclick="closeModal('modal-detail')">&times;</button>
+      </div>
+
+      <div id="detail-content"></div>
+
+      <div id="detail-actions" class="mt-2"></div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ========== CONSTANTS ==========
+    const STORAGE_KEY = 'spotswap_v3';
+    const VERIFICATION_TIME = 10000; // 10 seconds
+
+    // ========== STATE ==========
+    let state = {
+      user: {
+        username: 'Esploratore_' + Math.floor(Math.random() * 1000),
+        id: 'user_' + Date.now()
+      },
+      spots: [],
+      tradeRequests: [],
+      currentOfferId: null,
+      currentRequestId: null,
+      selectedOfferSpots: []
+    };
+
+    // ========== INIT ==========
+    function init() {
+      loadState();
+      setupEventListeners();
+      addDemoData();
+      showView('market');
+      updateUI();
+      startVerificationChecker();
+    }
+
+    // ========== STORAGE ==========
+    function loadState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          state = { ...state, ...parsed };
+        }
+      } catch (e) {
+        console.error('Error loading state:', e);
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {
+        console.error('Error saving state:', e);
+      }
+    }
+
+    // ========== NAVIGATION ==========
+    function showView(view) {
+      document.querySelectorAll('section[id^="view-"]').forEach(v => {
+        v.classList.add('hidden');
+      });
+      
+      document.getElementById(`view-${view}`).classList.remove('hidden');
+      
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.route === view);
+      });
+      
+      if (view === 'market') renderMarket();
+      if (view === 'requests') renderRequests();
+      if (view === 'my-spots') renderMySpots();
+      
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ========== EVENT LISTENERS ==========
+    function setupEventListeners() {
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => showView(btn.dataset.route));
+      });
+
+      ['filter-search', 'filter-access', 'filter-category'].forEach(id => {
+        document.getElementById(id).addEventListener('input', renderMarket);
+      });
+      
+      document.getElementById('btn-reset-filters').addEventListener('click', resetFilters);
+      document.getElementById('btn-publish').addEventListener('click', publishSpot);
+      document.getElementById('btn-send-offer').addEventListener('click', sendOffer);
+      document.getElementById('btn-accept-trade').addEventListener('click', acceptTrade);
+
+      // Tabs
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          const tabName = tab.dataset.tab;
+          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          
+          document.getElementById('tab-received').classList.toggle('hidden', tabName !== 'received');
+          document.getElementById('tab-sent').classList.toggle('hidden', tabName !== 'sent');
+        });
+      });
+    }
+
+    // ========== MARKET ==========
+    function renderMarket() {
+      const search = document.getElementById('filter-search').value.toLowerCase();
+      const access = document.getElementById('filter-access').value;
+      const category = document.getElementById('filter-category').value;
+
+      let filtered = state.spots.filter(spot => {
+        if (spot.status !== 'active') return false;
+        if (spot.author === state.user.username) return false;
+
+        const matchSearch = !search || 
+          spot.give.toLowerCase().includes(search) ||
+          spot.want.toLowerCase().includes(search) ||
+          spot.region.toLowerCase().includes(search);
+          
+        const matchAccess = access === 'all' || spot.accessType === access;
+        const matchCategory = category === 'all' || spot.category === category;
+
+        return matchSearch && matchAccess && matchCategory;
+      });
+
+      const grid = document.getElementById('market-grid');
+      const count = document.getElementById('results-count');
+      
+      count.textContent = `${filtered.length} risultat${filtered.length === 1 ? 'o' : 'i'}`;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="card empty-state" style="grid-column:1/-1">
+            <div class="empty-state-icon">🔍</div>
+            <div>Nessuno spot trovato</div>
+            <p class="text-muted">Prova a modificare i filtri</p>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(spot => `
+        <div class="spot-card" onclick="viewSpotDetail('${spot.id}')">
+          <div class="spot-header">
+            <div style="flex:1">
+              <div class="spot-title">${escapeHtml(spot.give)}</div>
+              <div class="spot-meta">📍 ${escapeHtml(spot.region)}</div>
+            </div>
+            <span class="badge badge-success">Disponibile</span>
+          </div>
+
+          <div class="spot-exchange">
+            <div class="spot-exchange-row">
+              <strong>Offre:</strong> ${escapeHtml(spot.give)}
+            </div>
+            <div class="spot-exchange-row">
+              <strong>Cerca:</strong> ${escapeHtml(spot.want)}
+            </div>
+          </div>
+
+          <div class="tags">
+            <span class="badge badge-primary">${getAccessLabel(spot.accessType)}</span>
+            <span class="badge badge-info">${spot.category}</span>
+            <span class="badge badge-primary">${getTimeAgo(spot.createdAt)}</span>
+          </div>
+
+          <div class="text-muted" style="margin-top:12px;font-size:13px">
+            di ${escapeHtml(spot.author)}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function resetFilters() {
+      document.getElementById('filter-search').value = '';
+      document.getElementById('filter-access').value = 'all';
+      document.getElementById('filter-category').value = 'all';
+      renderMarket();
+      showToast('Filtri resettati');
+    }
+
+    // ========== MY SPOTS ==========
+    function renderMySpots() {
+      const mySpots = state.spots.filter(s => s.author === state.user.username);
+      const grid = document.getElementById('my-spots-grid');
+
+      if (mySpots.length === 0) {
+        grid.innerHTML = `
+          <div class="card empty-state" style="grid-column:1/-1">
+            <div class="empty-state-icon">📝</div>
+            <div>Nessuno spot pubblicato</div>
+            <p class="text-muted">Pubblica il tuo primo spot per iniziare</p>
+            <button class="btn btn-primary mt-2" onclick="showView('new')">+ Pubblica spot</button>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = mySpots.map(spot => `
+        <div class="spot-card" onclick="viewSpotDetail('${spot.id}')">
+          <div class="spot-header">
+            <div style="flex:1">
+              <div class="spot-title">${escapeHtml(spot.give)}</div>
+              <div class="spot-meta">📍 ${escapeHtml(spot.region)}</div>
+            </div>
+            <span class="badge badge-${spot.status === 'active' ? 'success' : 'warning'}">
+              ${spot.status === 'active' ? 'Attivo' : 'In scambio'}
+            </span>
+          </div>
+
+          <div class="spot-exchange">
+            <div class="spot-exchange-row">
+              <strong>Offri:</strong> ${escapeHtml(spot.give)}
+            </div>
+            <div class="spot-exchange-row">
+              <strong>Cerchi:</strong> ${escapeHtml(spot.want)}
+            </div>
+          </div>
+
+          <div class="tags">
+            <span class="badge badge-primary">${getAccessLabel(spot.accessType)}</span>
+            <span class="badge badge-info">${spot.category}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ========== REQUESTS ==========
+    function renderRequests() {
+      const received = state.tradeRequests.filter(r => {
+        const spot = state.spots.find(s => s.id === r.spotId);
+        return spot && spot.author === state.user.username;
+      });
+
+      const sent = state.tradeRequests.filter(r => r.fromUser === state.user.username);
+
+      document.getElementById('received-count').textContent = `(${received.length})`;
+      document.getElementById('sent-count').textContent = `(${sent.length})`;
+
+      // Received requests
+      const receivedContainer = document.getElementById('received-requests');
+      if (received.length === 0) {
+        receivedContainer.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📭</div>
+            <div>Nessuna richiesta ricevuta</div>
+          </div>
+        `;
+      } else {
+        receivedContainer.innerHTML = received.map(req => renderTradeRequest(req, 'received')).join('');
+      }
+
+      // Sent requests
+      const sentContainer = document.getElementById('sent-requests');
+      if (sent.length === 0) {
+        sentContainer.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📤</div>
+            <div>Nessuna richiesta inviata</div>
+          </div>
+        `;
+      } else {
+        sentContainer.innerHTML = sent.map(req => renderTradeRequest(req, 'sent')).join('');
+      }
+
+      updateRequestsCount();
+    }
+
+    function renderTradeRequest(req, type) {
+      const spot = state.spots.find(s => s.id === req.spotId);
+      if (!spot) return '';
+
+      const offeredSpots = req.offeredSpots.map(id => state.spots.find(s => s.id === id)).filter(Boolean);
+
+      let statusBadge = '';
+      let actions = '';
+
+      switch(req.status) {
+        case 'pending':
+          statusBadge = '<span class="trade-status pending">⏳ In attesa</span>';
+          if (type === 'received') {
+            actions = `<button class="btn btn-success" onclick="chooseSpotFromOffer('${req.id}')">Scegli spot</button>`;
+          }
+          break;
+        case 'verifying':
+          const remaining = Math.ceil((req.verificationStartedAt + VERIFICATION_TIME - Date.now()) / 1000);
+          statusBadge = `<span class="trade-status verifying">🔍 Verifica admin (${remaining}s)</span>`;
+          break;
+        case 'accepted':
+          statusBadge = '<span class="trade-status accepted">✅ Completato</span>';
+          break;
+        case 'rejected':
+          statusBadge = '<span class="trade-status rejected">❌ Rifiutato</span>';
+          break;
+      }
+
+      return `
+        <div class="trade-request">
+          <div class="flex-between mb-2">
+            <div>
+              <strong>${type === 'received' ? 'Da' : 'Per'}: ${escapeHtml(type === 'received' ? req.fromUser : spot.author)}</strong>
+              <div class="text-muted" style="font-size:13px">${getTimeAgo(req.createdAt)}</div>
+            </div>
+            ${statusBadge}
+          </div>
+
+          <div class="mb-2">
+            <strong>Spot richiesto:</strong> ${escapeHtml(spot.give)}
+          </div>
+
+          <div class="mb-2">
+            <strong>Spot offerti in cambio:</strong>
+            ${offeredSpots.map(s => `
+              <div style="padding:8px;background:var(--bg);border-radius:6px;margin-top:8px;border:1px solid var(--border)">
+                ${escapeHtml(s.give)} - ${escapeHtml(s.region)}
+                ${req.selectedSpotId === s.id ? '<span class="badge badge-success" style="margin-left:8px">✓ Scelto</span>' : ''}
+              </div>
+            `).join('')}
+          </div>
+
+          ${req.status === 'accepted' && req.selectedSpotId ? renderCoordinates(req) : ''}
+
+          ${actions}
+        </div>
+      `;
+    }
+
+    function renderCoordinates(req) {
+      const spot = state.spots.find(s => s.id === req.spotId);
+      const selectedSpot = state.spots.find(s => s.id === req.selectedSpotId);
+      
+      let html = '<div class="coordinates-box">';
+      html += '<strong>🎉 Scambio completato! Ecco le coordinate:</strong>';
+      
+      if (req.fromUser === state.user.username) {
+        html += `<div style="margin-top:8px">📍 ${escapeHtml(spot.give)}: ${escapeHtml(spot.coordinates || 'Non disponibili')}</div>`;
+      } else {
+        html += `<div style="margin-top:8px">📍 ${escapeHtml(selectedSpot.give)}: ${escapeHtml(selectedSpot.coordinates || 'Non disponibili')}</div>`;
+      }
+      
+      html += '</div>';
+      return html;
+    }
+
+    // ========== TRADE ACTIONS ==========
+    function openOfferModal(spotId) {
+      const myActiveSpots = state.spots.filter(s => 
+        s.author === state.user.username && 
+        s.status === 'active'
+      );
+
+      if (myActiveSpots.length === 0) {
+        showToast('Devi avere almeno uno spot attivo per fare una proposta', 'error');
+        showView('new');
+        return;
+      }
+
+      state.currentOfferId = spotId;
+      state.selectedOfferSpots = [];
+
+      const list = document.getElementById('offer-spots-list');
+      list.innerHTML = myActiveSpots.map(spot => `
+        <label class="spot-selector">
+          <input type="checkbox" value="${spot.id}" onchange="toggleOfferSpot('${spot.id}')">
+          <div>
+            <strong>${escapeHtml(spot.give)}</strong>
+            <div class="text-muted" style="font-size:13px">📍 ${escapeHtml(spot.region)}</div>
+          </div>
+        </label>
+      `).join('');
+
+      openModal('modal-offer');
+    }
+
+    function toggleOfferSpot(spotId) {
+      const index = state.selectedOfferSpots.indexOf(spotId);
+      if (index > -1) {
+        state.selectedOfferSpots.splice(index, 1);
+      } else {
+        if (state.selectedOfferSpots.length >= 3) {
+          showToast('Puoi selezionare massimo 3 spot', 'error');
+          document.querySelector(`input[value="${spotId}"]`).checked = false;
+          return;
+        }
+        state.selectedOfferSpots.push(spotId);
+      }
+    }
+
+    function sendOffer() {
+      if (state.selectedOfferSpots.length === 0) {
+        showToast('Seleziona almeno uno spot', 'error');
+        return;
+      }
+
+      const request = {
+        id: generateId(),
+        spotId: state.currentOfferId,
+        fromUser: state.user.username,
+        offeredSpots: [...state.selectedOfferSpots],
+        status: 'pending',
+        createdAt: Date.now()
+      };
+
+      state.tradeRequests.push(request);
+      saveState();
+
+      closeModal('modal-offer');
+      showToast('Proposta inviata con successo!', 'success');
+      showView('requests');
+    }
+
+    function chooseSpotFromOffer(requestId) {
+      state.currentRequestId = requestId;
+      const request = state.tradeRequests.find(r => r.id === requestId);
+      
+      const offeredSpots = request.offeredSpots.map(id => 
+        state.spots.find(s => s.id === id)
+      ).filter(Boolean);
+
+      const list = document.getElementById('choose-spots-list');
+      list.innerHTML = offeredSpots.map(spot => `
+        <label class="spot-selector">
+          <input type="radio" name="chosen-spot" value="${spot.id}">
+          <div>
+            <strong>${escapeHtml(spot.give)}</strong>
+            <div class="text-muted" style="font-size:13px">📍 ${escapeHtml(spot.region)}</div>
+            <div style="margin-top:8px;font-size:13px">${escapeHtml(spot.description)}</div>
+            <div class="tags" style="margin-top:8px">
+              <span class="badge badge-primary">${getAccessLabel(spot.accessType)}</span>
+              <span class="badge badge-info">${spot.category}</span>
+            </div>
+          </div>
+        </label>
+      `).join('');
+
+      openModal('modal-choose');
+    }
+
+    function acceptTrade() {
+      const chosen = document.querySelector('input[name="chosen-spot"]:checked');
+      if (!chosen) {
+        showToast('Seleziona uno spot', 'error');
+        return;
+      }
+
+      const request = state.tradeRequests.find(r => r.id === state.currentRequestId);
+      request.selectedSpotId = chosen.value;
+      request.status = 'verifying';
+      request.verificationStartedAt = Date.now();
+
+      // Mark spots as in trade
+      const mySpot = state.spots.find(s => s.id === request.spotId);
+      const theirSpot = state.spots.find(s => s.id === chosen.value);
+      if (mySpot) mySpot.status = 'in_trade';
+      if (theirSpot) theirSpot.status = 'in_trade';
+
+      saveState();
+      closeModal('modal-choose');
+      showToast('Scambio accettato! In attesa di verifica admin...', 'success');
+      renderRequests();
+    }
+
+    // ========== VERIFICATION CHECKER ==========
+    function startVerificationChecker() {
+      setInterval(() => {
+        let updated = false;
+
+        state.tradeRequests.forEach(req => {
+          if (req.status === 'verifying') {
+            const elapsed = Date.now() - req.verificationStartedAt;
+            if (elapsed >= VERIFICATION_TIME) {
+              req.status = 'accepted';
+              updated = true;
+
+              // Mark spots as completed
+              const spot1 = state.spots.find(s => s.id === req.spotId);
+              const spot2 = state.spots.find(s => s.id === req.selectedSpotId);
+              if (spot1) spot1.status = 'completed';
+              if (spot2) spot2.status = 'completed';
+
+              if (document.getElementById('view-requests').classList.contains('hidden') === false) {
+                showToast('Scambio verificato e completato! 🎉', 'success');
+              }
+            }
+          }
+        });
+
+        if (updated) {
+          saveState();
+          if (document.getElementById('view-requests').classList.contains('hidden') === false) {
+            renderRequests();
+          }
+        }
+      }, 1000);
+    }
+
+    // ========== PUBLISH SPOT ==========
+    function publishSpot() {
+      const give = document.getElementById('input-give').value.trim();
+      const want = document.getElementById('input-want').value.trim();
+      const region = document.getElementById('input-region').value.trim();
+      const coordinates = document.getElementById('input-coordinates').value.trim();
+      const accessType = document.getElementById('input-access').value;
+      const category = document.getElementById('input-category').value;
+      const description = document.getElementById('input-description').value.trim();
+      const legal = document.getElementById('input-legal').checked;
+
+      if (!give || !want || !region) {
+        showToast('Compila tutti i campi obbligatori', 'error');
+        return;
+      }
+
+      if (!coordinates) {
+        showToast('Inserisci le coordinate GPS', 'error');
+        return;
+      }
+
+      if (!legal) {
+        showToast('Devi confermare l\'accesso legale', 'error');
+        return;
+      }
+
+      const spot = {
+        id: generateId(),
+        give, want, region, coordinates,
+        accessType, category,
+        description: description || 'Nessuna descrizione',
+        author: state.user.username,
+        status: 'active',
+        createdAt: Date.now()
+      };
+
+      state.spots.unshift(spot);
+      saveState();
+
+      // Reset form
+      document.getElementById('input-give').value = '';
+      document.getElementById('input-want').value = '';
+      document.getElementById('input-region').value = '';
+      document.getElementById('input-coordinates').value = '';
+      document.getElementById('input-description').value = '';
+      document.getElementById('input-legal').checked = false;
+
+      showToast('Spot pubblicato con successo!', 'success');
+      showView('my-spots');
+    }
+
+    // ========== SPOT DETAIL ==========
+    function viewSpotDetail(spotId) {
+      const spot = state.spots.find(s => s.id === spotId);
+      if (!spot) return;
+
+      document.getElementById('detail-title').textContent = spot.give;
+      
+      const content = document.getElementById('detail-content');
+      content.innerHTML = `
+        <div class="tags mb-2">
+          <span class="badge badge-primary">${getAccessLabel(spot.accessType)}</span>
+          <span class="badge badge-info">${spot.category}</span>
+          <span class="badge badge-${spot.status === 'active' ? 'success' : 'warning'}">
+            ${spot.status === 'active' ? 'Disponibile' : 'In scambio'}
+          </span>
+        </div>
+
+        <div class="mb-2">
+          <strong>Autore:</strong> ${escapeHtml(spot.author)}
+        </div>
+
+        <div class="mb-2">
+          <strong>Zona:</strong> 📍 ${escapeHtml(spot.region)}
+        </div>
+
+        <div class="mb-2">
+          <strong>Pubblicato:</strong> ${getTimeAgo(spot.createdAt)}
+        </div>
+
+        <div class="spot-exchange mb-2">
+          <div class="spot-exchange-row">
+            <strong>Offre:</strong> ${escapeHtml(spot.give)}
+          </div>
+          <div class="spot-exchange-row">
+            <strong>Cerca:</strong> ${escapeHtml(spot.want)}
+          </div>
+        </div>
+
+        <div class="mb-2">
+          <strong>Descrizione:</strong>
+          <p style="margin-top:8px">${escapeHtml(spot.description)}</p>
+        </div>
+
+        ${spot.status === 'completed' ? `
+          <div class="coordinates-box">
+            <strong>📍 Coordinate GPS</strong>
+            <div style="margin-top:8px">${escapeHtml(spot.coordinates)}</div>
+          </div>
+        ` : ''}
+      `;
+
+      const actions = document.getElementById('detail-actions');
+      if (spot.author !== state.user.username && spot.status === 'active') {
+        actions.innerHTML = `
+          <button class="btn btn-primary btn-lg" onclick="openOfferModal('${spot.id}')">
+            Proponi scambio
+          </button>
+        `;
+      } else {
+        actions.innerHTML = '';
+      }
+
+      openModal('modal-detail');
+    }
+
+    // ========== MODAL ==========
+    function openModal(id) {
+      document.getElementById(id).classList.add('show');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('show');
+    }
+
+    // ========== UI UPDATES ==========
+    function updateUI() {
+      updateRequestsCount();
+    }
+
+    function updateRequestsCount() {
+      const pendingReceived = state.tradeRequests.filter(r => {
+        const spot = state.spots.find(s => s.id === r.spotId);
+        return spot && spot.author === state.user.username && r.status === 'pending';
+      }).length;
+
+      const badge = document.getElementById('requests-count');
+      if (pendingReceived > 0) {
+        badge.textContent = pendingReceived;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+
+    // ========== DEMO DATA ==========
+    function addDemoData() {
+      if (state.spots.length > 0) return;
+
+      const demoSpots = [
+        {
+          id: generateId(),
+          give: 'Ex fabbrica tessile con permesso comunale',
+          want: 'Hotel o resort abbandonato',
+          region: 'Lombardia - Bergamo',
+          coordinates: '45.6983, 9.6773',
+          accessType: 'permesso',
+          category: 'industriale',
+          description: 'Struttura molto fotogenica. Permesso ottenuto dal comune per visite.',
+          author: 'UrbexPro',
+          status: 'active',
+          createdAt: Date.now() - 86400000
+        },
+        {
+          id: generateId(),
+          give: 'Villa liberty con tour organizzato',
+          want: 'Struttura militare o bunker',
+          region: 'Piemonte - Torino',
+          coordinates: '45.0703, 7.6869',
+          accessType: 'tour',
+          category: 'villa',
+          description: 'Bellissima villa con affreschi. Tour ogni weekend.',
+          author: 'ExplorerIta',
+          status: 'active',
+          createdAt: Date.now() - 172800000
+        },
+        {
+          id: generateId(),
+          give: 'Sanatorio pubblico visitabile',
+          want: 'Fabbrica o centrale elettrica',
+          region: 'Toscana - Firenze',
+          coordinates: '43.7696, 11.2558',
+          accessType: 'pubblico',
+          category: 'sanitario',
+          description: 'Area aperta al pubblico, architettura razionalista.',
+          author: 'SpotSeeker',
+          status: 'active',
+          createdAt: Date.now() - 259200000
+        }
+      ];
+
+      state.spots.push(...demoSpots);
+      saveState();
+    }
+
+    // ========== UTILITIES ==========
+    function generateId() {
+      return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function getTimeAgo(timestamp) {
+      const diff = Date.now() - timestamp;
+      const minutes = Math.floor(diff / 60000);
+      const hours = Math.floor(minutes / 60);
+      const days = Math.floor(hours / 24);
+
+      if (days > 0) return `${days}g fa`;
+      if (hours > 0) return `${hours}h fa`;
+      if (minutes > 0) return `${minutes}m fa`;
+      return 'Ora';
+    }
+
+    function getAccessLabel(type) {
+      const labels = {
+        permesso: 'Con permesso',
+        tour: 'Tour guidato',
+        pubblico: 'Pubblico'
+      };
+      return labels[type] || type;
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast show ' + type;
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    // ========== START APP ==========
+    init();
+  </script>
+</body>
+</html>
