@@ -686,7 +686,7 @@
     <!-- MARKET VIEW -->
     <section id="view-market">
       <div class="alert alert-info">
-        <strong>✅ Solo accessi legali</strong> — Pubblica solo spot con permesso ufficiale, tour organizzato o area pubblica. Niente coordinate fino all'accordo!
+        <strong>✅ Solo accessi legali</strong> — Pubblica solo spot con permesso ufficiale. Niente coordinate fino all'accordo!
       </div>
 
       <div class="section-header">
@@ -699,16 +699,6 @@
           <div class="form-group" style="margin:0">
             <label class="form-label">Cerca</label>
             <input type="text" class="form-input" id="filter-search" placeholder="es. hotel, fabbrica...">
-          </div>
-          
-          <div class="form-group" style="margin:0">
-            <label class="form-label">Accesso</label>
-            <select class="form-select" id="filter-access">
-              <option value="all">Tutti</option>
-              <option value="permesso">Con permesso</option>
-              <option value="tour">Tour guidato</option>
-              <option value="pubblico">Pubblico</option>
-            </select>
           </div>
           
           <div class="form-group" style="margin:0">
@@ -796,15 +786,6 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">Tipo di accesso</label>
-            <select class="form-select" id="input-access">
-              <option value="permesso">Con permesso</option>
-              <option value="tour">Tour guidato</option>
-              <option value="pubblico">Pubblico</option>
-            </select>
-          </div>
-
-          <div class="form-group">
             <label class="form-label">Categoria</label>
             <select class="form-select" id="input-category">
               <option value="industriale">Industriale</option>
@@ -833,7 +814,7 @@
           <input type="checkbox" id="input-legal">
           <span>
             <strong>Confermo</strong> che questo spot ha <strong>accesso legale e consentito</strong> 
-            (permesso ufficiale, tour organizzato o area pubblica) e fornirò coordinate solo dopo verifica.
+            e fornirò coordinate solo dopo verifica.
           </span>
         </label>
 
@@ -978,7 +959,7 @@
         btn.addEventListener('click', () => showView(btn.dataset.route));
       });
 
-      ['filter-search', 'filter-access', 'filter-category'].forEach(id => {
+      ['filter-search', 'filter-category'].forEach(id => {
         document.getElementById(id).addEventListener('input', renderMarket);
       });
       
@@ -1003,7 +984,6 @@
     // ========== MARKET ==========
     function renderMarket() {
       const search = document.getElementById('filter-search').value.toLowerCase();
-      const access = document.getElementById('filter-access').value;
       const category = document.getElementById('filter-category').value;
 
       let filtered = state.spots.filter(spot => {
@@ -1013,12 +993,12 @@
         const matchSearch = !search || 
           spot.give.toLowerCase().includes(search) ||
           spot.want.toLowerCase().includes(search) ||
-          spot.region.toLowerCase().includes(search);
+          spot.region.toLowerCase().includes(search) ||
+          spot.description.toLowerCase().includes(search);
           
-        const matchAccess = access === 'all' || spot.accessType === access;
         const matchCategory = category === 'all' || spot.category === category;
 
-        return matchSearch && matchAccess && matchCategory;
+        return matchSearch && matchCategory;
       });
 
       const grid = document.getElementById('market-grid');
@@ -1057,7 +1037,6 @@
           </div>
 
           <div class="tags">
-            <span class="badge badge-primary">${getAccessLabel(spot.accessType)}</span>
             <span class="badge badge-info">${spot.category}</span>
             <span class="badge badge-primary">${getTimeAgo(spot.createdAt)}</span>
           </div>
@@ -1071,7 +1050,6 @@
 
     function resetFilters() {
       document.getElementById('filter-search').value = '';
-      document.getElementById('filter-access').value = 'all';
       document.getElementById('filter-category').value = 'all';
       renderMarket();
       showToast('Filtri resettati');
@@ -1116,7 +1094,6 @@
           </div>
 
           <div class="tags">
-            <span class="badge badge-primary">${getAccessLabel(spot.accessType)}</span>
             <span class="badge badge-info">${spot.category}</span>
           </div>
         </div>
@@ -1324,7 +1301,6 @@
             <div class="text-muted" style="font-size:13px">📍 ${escapeHtml(spot.region)}</div>
             <div style="margin-top:8px;font-size:13px">${escapeHtml(spot.description)}</div>
             <div class="tags" style="margin-top:8px">
-              <span class="badge badge-primary">${getAccessLabel(spot.accessType)}</span>
               <span class="badge badge-info">${spot.category}</span>
             </div>
           </div>
@@ -1398,7 +1374,6 @@
       const want = document.getElementById('input-want').value.trim();
       const region = document.getElementById('input-region').value.trim();
       const coordinates = document.getElementById('input-coordinates').value.trim();
-      const accessType = document.getElementById('input-access').value;
       const category = document.getElementById('input-category').value;
       const description = document.getElementById('input-description').value.trim();
       const legal = document.getElementById('input-legal').checked;
@@ -1421,7 +1396,7 @@
       const spot = {
         id: generateId(),
         give, want, region, coordinates,
-        accessType, category,
+        category,
         description: description || 'Nessuna descrizione',
         author: state.user.username,
         status: 'active',
@@ -1453,7 +1428,6 @@
       const content = document.getElementById('detail-content');
       content.innerHTML = `
         <div class="tags mb-2">
-          <span class="badge badge-primary">${getAccessLabel(spot.accessType)}</span>
           <span class="badge badge-info">${spot.category}</span>
           <span class="badge badge-${spot.status === 'active' ? 'success' : 'warning'}">
             ${spot.status === 'active' ? 'Disponibile' : 'In scambio'}
@@ -1539,7 +1513,7 @@
 
     // ========== DEMO DATA ==========
     function addDemoData() {
-      if (state.spots.length > 0) return;
+      if (state.spots.length > 5) return;
 
       const demoSpots = [
         {
@@ -1548,7 +1522,6 @@
           want: 'Hotel o resort abbandonato',
           region: 'Lombardia - Bergamo',
           coordinates: '45.6983, 9.6773',
-          accessType: 'permesso',
           category: 'industriale',
           description: 'Struttura molto fotogenica. Permesso ottenuto dal comune per visite.',
           author: 'UrbexPro',
@@ -1557,13 +1530,12 @@
         },
         {
           id: generateId(),
-          give: 'Villa liberty con tour organizzato',
+          give: 'Villa liberty con giardino abbandonato',
           want: 'Struttura militare o bunker',
           region: 'Piemonte - Torino',
           coordinates: '45.0703, 7.6869',
-          accessType: 'tour',
           category: 'villa',
-          description: 'Bellissima villa con affreschi. Tour ogni weekend.',
+          description: 'Bellissima villa con affreschi. Architettura liberty ben conservata.',
           author: 'ExplorerIta',
           status: 'active',
           createdAt: Date.now() - 172800000
@@ -1574,12 +1546,143 @@
           want: 'Fabbrica o centrale elettrica',
           region: 'Toscana - Firenze',
           coordinates: '43.7696, 11.2558',
-          accessType: 'pubblico',
           category: 'sanitario',
-          description: 'Area aperta al pubblico, architettura razionalista.',
+          description: 'Area aperta al pubblico, architettura razionalista. Ampio parco.',
           author: 'SpotSeeker',
           status: 'active',
           createdAt: Date.now() - 259200000
+        },
+        {
+          id: generateId(),
+          give: 'Ex caserma militare dismessa',
+          want: 'Hotel di montagna abbandonato',
+          region: 'Trentino Alto Adige',
+          coordinates: '46.4983, 11.3548',
+          category: 'militare',
+          description: 'Struttura militare degli anni 30. Accesso autorizzato.',
+          author: 'MilitaryExplorer',
+          status: 'active',
+          createdAt: Date.now() - 345600000
+        },
+        {
+          id: generateId(),
+          give: 'Hotel abbandonato anni 70',
+          want: 'Villa signorile o castello',
+          region: 'Liguria - Genova',
+          coordinates: '44.4056, 8.9463',
+          category: 'hotel',
+          description: 'Hotel con vista mare, strutture ancora intatte. Permesso di accesso.',
+          author: 'CoastalHunter',
+          status: 'active',
+          createdAt: Date.now() - 432000000
+        },
+        {
+          id: generateId(),
+          give: 'Ex zuccherificio industriale',
+          want: 'Ospedale o clinica abbandonata',
+          region: 'Emilia Romagna',
+          coordinates: '44.4949, 11.3426',
+          category: 'industriale',
+          description: 'Grande complesso industriale con macchinari originali.',
+          author: 'FactoryFinder',
+          status: 'active',
+          createdAt: Date.now() - 518400000
+        },
+        {
+          id: generateId(),
+          give: 'Castello medievale parzialmente restaurato',
+          want: 'Struttura industriale vintage',
+          region: 'Umbria - Perugia',
+          coordinates: '43.1107, 12.3908',
+          category: 'villa',
+          description: 'Castello del 1400 con torri e sotterranei. Accesso organizzato.',
+          author: 'HistoryHunter',
+          status: 'active',
+          createdAt: Date.now() - 604800000
+        },
+        {
+          id: generateId(),
+          give: 'Ex ospedale psichiatrico',
+          want: 'Villa liberty o decò',
+          region: 'Veneto - Venezia',
+          coordinates: '45.4408, 12.3155',
+          category: 'sanitario',
+          description: 'Struttura fascista imponente. Tour guidati disponibili.',
+          author: 'ArchitectureFan',
+          status: 'active',
+          createdAt: Date.now() - 691200000
+        },
+        {
+          id: generateId(),
+          give: 'Centrale idroelettrica dismessa',
+          want: 'Hotel termale abbandonato',
+          region: 'Valle d\'Aosta',
+          coordinates: '45.7376, 7.3207',
+          category: 'industriale',
+          description: 'Impianto anni 50 con turbine ancora presenti. Accesso sicuro.',
+          author: 'PowerPlantExplorer',
+          status: 'active',
+          createdAt: Date.now() - 777600000
+        },
+        {
+          id: generateId(),
+          give: 'Villa sul lago abbandonata',
+          want: 'Struttura militare costiera',
+          region: 'Lago di Como',
+          coordinates: '45.8170, 9.0856',
+          category: 'villa',
+          description: 'Villa Liberty direttamente sul lago. Vista mozzafiato.',
+          author: 'LakeExplorer',
+          status: 'active',
+          createdAt: Date.now() - 864000000
+        },
+        {
+          id: generateId(),
+          give: 'Ex miniera di carbone',
+          want: 'Sanatorio o ospedale abbandonato',
+          region: 'Sardegna - Carbonia',
+          coordinates: '39.1642, 8.5219',
+          category: 'industriale',
+          description: 'Miniera sotterranea con gallerie. Tour organizzati.',
+          author: 'UndergroundPro',
+          status: 'active',
+          createdAt: Date.now() - 950400000
+        },
+        {
+          id: generateId(),
+          give: 'Hotel di lusso anni 60 mai aperto',
+          want: 'Fabbrica tessile o manifatturiera',
+          region: 'Riviera Romagnola',
+          coordinates: '44.2244, 12.4443',
+          category: 'hotel',
+          description: 'Struttura completata ma mai inaugurata. Architettura unica.',
+          author: 'UnfinishedBeauty',
+          status: 'active',
+          createdAt: Date.now() - 1036800000
+        },
+        {
+          id: generateId(),
+          give: 'Ex colonia marina fascista',
+          want: 'Castello o fortezza',
+          region: 'Marche - Ancona',
+          coordinates: '43.6158, 13.5189',
+          category: 'altro',
+          description: 'Architettura razionalista ben conservata. Sul mare.',
+          author: 'FascistArchitecture',
+          status: 'active',
+          createdAt: Date.now() - 1123200000
+        },
+        {
+          id: generateId(),
+          give: 'Ex stazione ferroviaria dismessa',
+          want: 'Villa con cappella privata',
+          region: 'Sicilia - Catania',
+          coordinates: '37.5079, 15.0830',
+          category: 'altro',
+          description: 'Stazione in stile liberty con binari ancora presenti.',
+          author: 'RailwayHunter',
+          status: 'active',
+          createdAt: Date.now() - 1209600000
         }
       ];
 
@@ -1608,15 +1711,6 @@
       if (hours > 0) return `${hours}h fa`;
       if (minutes > 0) return `${minutes}m fa`;
       return 'Ora';
-    }
-
-    function getAccessLabel(type) {
-      const labels = {
-        permesso: 'Con permesso',
-        tour: 'Tour guidato',
-        pubblico: 'Pubblico'
-      };
-      return labels[type] || type;
     }
 
     function showToast(message, type = 'success') {
