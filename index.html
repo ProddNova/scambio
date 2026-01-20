@@ -669,7 +669,7 @@
         </button>
         <button class="nav-btn" data-route="requests">
           Richieste
-          <span class="badge-count hidden" id="requests-count">0</span>
+          <span class="badge-count" id="requests-count">5</span>
         </button>
         <button class="nav-btn" data-route="my-spots">
           I miei spot
@@ -717,7 +717,7 @@
 
         <div class="flex gap-2 mt-2" style="align-items:center">
           <button class="btn btn-ghost" id="btn-reset-filters">Reset</button>
-          <span class="badge badge-primary" id="results-count">0 risultati</span>
+          <span class="badge badge-primary" id="results-count">25 risultati</span>
         </div>
       </div>
 
@@ -732,8 +732,8 @@
       </div>
 
       <div class="tabs">
-        <button class="tab active" data-tab="received">Ricevute <span id="received-count">(0)</span></button>
-        <button class="tab" data-tab="sent">Inviate <span id="sent-count">(0)</span></button>
+        <button class="tab active" data-tab="received">Ricevute <span id="received-count">(5)</span></button>
+        <button class="tab" data-tab="sent">Inviate <span id="sent-count">(3)</span></button>
       </div>
 
       <div id="tab-received">
@@ -887,13 +887,13 @@
 
   <script>
     // ========== CONSTANTS ==========
-    const STORAGE_KEY = 'spotswap_v3';
+    const STORAGE_KEY = 'spotswap_v4';
     const VERIFICATION_TIME = 10000; // 10 seconds
 
     // ========== STATE ==========
     let state = {
       user: {
-        username: 'Esploratore_' + Math.floor(Math.random() * 1000),
+        username: 'UrbexMaster',
         id: 'user_' + Date.now()
       },
       spots: [],
@@ -1079,8 +1079,8 @@
               <div class="spot-title">${escapeHtml(spot.give)}</div>
               <div class="spot-meta">📍 ${escapeHtml(spot.region)}</div>
             </div>
-            <span class="badge badge-${spot.status === 'active' ? 'success' : 'warning'}">
-              ${spot.status === 'active' ? 'Attivo' : 'In scambio'}
+            <span class="badge badge-${spot.status === 'active' ? 'success' : spot.status === 'in_trade' ? 'warning' : 'danger'}">
+              ${spot.status === 'active' ? 'Attivo' : spot.status === 'in_trade' ? 'In scambio' : 'Completato'}
             </span>
           </div>
 
@@ -1429,8 +1429,8 @@
       content.innerHTML = `
         <div class="tags mb-2">
           <span class="badge badge-info">${spot.category}</span>
-          <span class="badge badge-${spot.status === 'active' ? 'success' : 'warning'}">
-            ${spot.status === 'active' ? 'Disponibile' : 'In scambio'}
+          <span class="badge badge-${spot.status === 'active' ? 'success' : spot.status === 'in_trade' ? 'warning' : 'danger'}">
+            ${spot.status === 'active' ? 'Disponibile' : spot.status === 'in_trade' ? 'In scambio' : 'Completato'}
           </span>
         </div>
 
@@ -1515,7 +1515,8 @@
     function addDemoData() {
       if (state.spots.length > 5) return;
 
-      const demoSpots = [
+      // Spot dell'utente corrente (I miei spot)
+      const mySpots = [
         {
           id: generateId(),
           give: 'Ex fabbrica tessile con permesso comunale',
@@ -1524,7 +1525,7 @@
           coordinates: '45.6983, 9.6773',
           category: 'industriale',
           description: 'Struttura molto fotogenica. Permesso ottenuto dal comune per visite.',
-          author: 'UrbexPro',
+          author: state.user.username,
           status: 'active',
           createdAt: Date.now() - 86400000
         },
@@ -1536,10 +1537,38 @@
           coordinates: '45.0703, 7.6869',
           category: 'villa',
           description: 'Bellissima villa con affreschi. Architettura liberty ben conservata.',
-          author: 'ExplorerIta',
-          status: 'active',
+          author: state.user.username,
+          status: 'in_trade',
           createdAt: Date.now() - 172800000
         },
+        {
+          id: generateId(),
+          give: 'Ex caserma militare dismessa',
+          want: 'Hotel di montagna abbandonato',
+          region: 'Trentino Alto Adige',
+          coordinates: '46.4983, 11.3548',
+          category: 'militare',
+          description: 'Struttura militare degli anni 30. Accesso autorizzato.',
+          author: state.user.username,
+          status: 'completed',
+          createdAt: Date.now() - 345600000
+        },
+        {
+          id: generateId(),
+          give: 'Centrale idroelettrica dismessa',
+          want: 'Hotel termale abbandonato',
+          region: 'Valle d\'Aosta',
+          coordinates: '45.7376, 7.3207',
+          category: 'industriale',
+          description: 'Impianto anni 50 con turbine ancora presenti. Accesso sicuro.',
+          author: state.user.username,
+          status: 'active',
+          createdAt: Date.now() - 777600000
+        }
+      ];
+
+      // Altri spot sul mercato
+      const marketSpots = [
         {
           id: generateId(),
           give: 'Sanatorio pubblico visitabile',
@@ -1551,18 +1580,6 @@
           author: 'SpotSeeker',
           status: 'active',
           createdAt: Date.now() - 259200000
-        },
-        {
-          id: generateId(),
-          give: 'Ex caserma militare dismessa',
-          want: 'Hotel di montagna abbandonato',
-          region: 'Trentino Alto Adige',
-          coordinates: '46.4983, 11.3548',
-          category: 'militare',
-          description: 'Struttura militare degli anni 30. Accesso autorizzato.',
-          author: 'MilitaryExplorer',
-          status: 'active',
-          createdAt: Date.now() - 345600000
         },
         {
           id: generateId(),
@@ -1611,18 +1628,6 @@
           author: 'ArchitectureFan',
           status: 'active',
           createdAt: Date.now() - 691200000
-        },
-        {
-          id: generateId(),
-          give: 'Centrale idroelettrica dismessa',
-          want: 'Hotel termale abbandonato',
-          region: 'Valle d\'Aosta',
-          coordinates: '45.7376, 7.3207',
-          category: 'industriale',
-          description: 'Impianto anni 50 con turbine ancora presenti. Accesso sicuro.',
-          author: 'PowerPlantExplorer',
-          status: 'active',
-          createdAt: Date.now() - 777600000
         },
         {
           id: generateId(),
@@ -1683,10 +1688,128 @@
           author: 'RailwayHunter',
           status: 'active',
           createdAt: Date.now() - 1209600000
+        },
+        {
+          id: generateId(),
+          give: 'Cava di marmo abbandonata',
+          want: 'Struttura sanitaria vintage',
+          region: 'Toscana - Carrara',
+          coordinates: '44.0795, 10.0977',
+          category: 'industriale',
+          description: 'Cava a cielo aperto con gallerie. Panorama incredibile.',
+          author: 'MarbleHunter',
+          status: 'active',
+          createdAt: Date.now() - 1296000000
+        },
+        {
+          id: generateId(),
+          give: 'Ex monastero del 1700',
+          want: 'Struttura industriale in mattoni',
+          region: 'Abruzzo - L\'Aquila',
+          coordinates: '42.3505, 13.3995',
+          category: 'altro',
+          description: 'Monastero con chiostro intatto. Accesso con guida.',
+          author: 'MonasteryExplorer',
+          status: 'active',
+          createdAt: Date.now() - 1382400000
+        },
+        {
+          id: generateId(),
+          give: 'Centrale telefonica abbandonata',
+          want: 'Villa con piscina abbandonata',
+          region: 'Lazio - Roma',
+          coordinates: '41.9028, 12.4964',
+          category: 'industriale',
+          description: 'Struttura anni 70 con apparecchiature vintage.',
+          author: 'TelecomExplorer',
+          status: 'active',
+          createdAt: Date.now() - 1468800000
         }
       ];
 
-      state.spots.push(...demoSpots);
+      state.spots.push(...mySpots, ...marketSpots);
+
+      // Richieste ricevute (da altri utenti per i nostri spot)
+      const receivedRequests = [
+        {
+          id: generateId(),
+          spotId: mySpots[0].id, // Fabbrica tessile
+          fromUser: 'ExplorerIta',
+          offeredSpots: [marketSpots[2].id, marketSpots[3].id], // Zuccherificio e Castello
+          status: 'pending',
+          createdAt: Date.now() - 3600000 // 1 ora fa
+        },
+        {
+          id: generateId(),
+          spotId: mySpots[3].id, // Centrale idroelettrica
+          fromUser: 'LakeExplorer',
+          offeredSpots: [marketSpots[5].id], // Villa sul lago
+          status: 'verifying',
+          selectedSpotId: marketSpots[5].id,
+          verificationStartedAt: Date.now() - 5000,
+          createdAt: Date.now() - 7200000 // 2 ore fa
+        },
+        {
+          id: generateId(),
+          spotId: mySpots[2].id, // Caserma militare
+          fromUser: 'MilitaryFan',
+          offeredSpots: [marketSpots[1].id], // Hotel anni 70
+          status: 'accepted',
+          selectedSpotId: marketSpots[1].id,
+          verificationStartedAt: Date.now() - 15000,
+          createdAt: Date.now() - 86400000 // 1 giorno fa
+        },
+        {
+          id: generateId(),
+          spotId: mySpots[0].id, // Fabbrica tessile
+          fromUser: 'SanatoriumLover',
+          offeredSpots: [marketSpots[0].id], // Sanatorio
+          status: 'rejected',
+          createdAt: Date.now() - 172800000 // 2 giorni fa
+        },
+        {
+          id: generateId(),
+          spotId: mySpots[3].id, // Centrale idroelettrica
+          fromUser: 'FactoryFinder',
+          offeredSpots: [marketSpots[2].id, marketSpots[6].id], // Zuccherificio e Miniera
+          status: 'pending',
+          createdAt: Date.now() - 1800000 // 30 minuti fa
+        }
+      ];
+
+      // Richieste inviate (dall'utente corrente ad altri)
+      const sentRequests = [
+        {
+          id: generateId(),
+          spotId: marketSpots[0].id, // Sanatorio
+          fromUser: state.user.username,
+          offeredSpots: [mySpots[0].id, mySpots[3].id], // Fabbrica e Centrale
+          status: 'pending',
+          createdAt: Date.now() - 5400000 // 1.5 ore fa
+        },
+        {
+          id: generateId(),
+          spotId: marketSpots[3].id, // Castello
+          fromUser: state.user.username,
+          offeredSpots: [mySpots[1].id], // Villa liberty
+          status: 'accepted',
+          selectedSpotId: mySpots[1].id,
+          verificationStartedAt: Date.now() - 12000,
+          createdAt: Date.now() - 43200000 // 12 ore fa
+        },
+        {
+          id: generateId(),
+          spotId: marketSpots[5].id, // Villa sul lago
+          fromUser: state.user.username,
+          offeredSpots: [mySpots[0].id], // Fabbrica tessile
+          status: 'verifying',
+          selectedSpotId: mySpots[0].id,
+          verificationStartedAt: Date.now() - 3000,
+          createdAt: Date.now() - 3600000 // 1 ora fa
+        }
+      ];
+
+      state.tradeRequests.push(...receivedRequests, ...sentRequests);
       saveState();
     }
 
