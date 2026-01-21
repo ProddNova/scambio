@@ -801,30 +801,38 @@
       border-bottom-color:var(--primary);
     }
 
-    /* MAP VIEW */
+    /* MAP VIEW - FIXED FOR MOBILE */
     .map-container{
       background:var(--bg-light);
       border-radius:var(--radius);
       overflow:hidden;
       position:relative;
-      min-height:500px;
       width:100%;
+      height:500px; /* Desktop height */
+      margin-bottom:0;
+      display:flex;
+      flex-direction:column;
     }
     
     #map {
-      width: 100%;
-      height: 500px;
-      border-radius: var(--radius);
+      flex:1;
+      width:100%;
+      border-radius:var(--radius);
+      z-index:1;
+      min-height:300px;
     }
     
     .leaflet-container {
       background: var(--bg-light) !important;
       font-family: inherit !important;
+      width:100% !important;
+      height:100% !important;
     }
     
     .leaflet-popup-content {
       color: var(--text) !important;
       background: var(--card) !important;
+      font-size:12px !important;
     }
     
     .leaflet-popup-content-wrapper {
@@ -832,6 +840,8 @@
       border: 1px solid var(--border) !important;
       color: var(--text) !important;
       border-radius: 8px !important;
+      padding:8px !important;
+      max-width:250px !important;
     }
     
     .leaflet-popup-tip {
@@ -842,20 +852,55 @@
     .leaflet-control-attribution {
       background: rgba(0,0,0,0.7) !important;
       color: var(--text-muted) !important;
+      font-size:10px !important;
+      padding:2px 5px !important;
     }
     
     .leaflet-control-attribution a {
       color: var(--primary-light) !important;
+      font-size:10px !important;
     }
     
     .leaflet-control-zoom a {
       background: var(--card) !important;
       color: var(--text) !important;
       border-color: var(--border) !important;
+      width:30px !important;
+      height:30px !important;
+      line-height:30px !important;
     }
     
     .leaflet-control-zoom a:hover {
       background: var(--card-hover) !important;
+    }
+    
+    .leaflet-control-zoom {
+      border:none !important;
+      box-shadow:var(--shadow) !important;
+      border-radius:5px !important;
+      overflow:hidden;
+    }
+    
+    /* Map controls container */
+    .map-controls-container {
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      justify-content:center;
+      padding:12px 0;
+      margin-top:0;
+      background:var(--card);
+      border-top:1px solid var(--border);
+      position:relative;
+      z-index:10;
+    }
+    
+    .map-controls-container .btn {
+      padding:8px 12px;
+      font-size:12px;
+      flex:1;
+      min-width:120px;
+      max-width:150px;
     }
 
     /* PROFILE STATS */
@@ -1030,19 +1075,11 @@
         justify-content:flex-start;
         margin-top:0;
         -webkit-overflow-scrolling:touch;
+        scrollbar-width:none;
       }
       
       nav::-webkit-scrollbar{
-        height:3px;
-      }
-      
-      nav::-webkit-scrollbar-track{
-        background:var(--bg-light);
-      }
-      
-      nav::-webkit-scrollbar-thumb{
-        background:var(--border);
-        border-radius:2px;
+        display:none;
       }
       
       .nav-btn{
@@ -1081,6 +1118,7 @@
       
       .card{
         padding:16px;
+        margin-bottom:12px;
       }
       
       .spot-card{
@@ -1089,6 +1127,8 @@
       
       .modal{
         padding:18px 14px;
+        margin:10px;
+        max-height:85vh;
       }
       
       .section-header h2{
@@ -1107,12 +1147,49 @@
         font-size:11px;
       }
       
+      /* MAP FIXES FOR MOBILE */
+      .map-container {
+        height:70vh !important;
+        min-height:400px;
+        max-height:600px;
+        margin-bottom:0;
+        border-radius:8px;
+        overflow:hidden;
+      }
+      
       #map {
-        height: 400px;
+        height:100% !important;
+        min-height:350px;
+      }
+      
+      .leaflet-container {
+        height:100% !important;
+        min-height:350px;
+      }
+      
+      .leaflet-control-zoom a {
+        width:36px !important;
+        height:36px !important;
+        line-height:36px !important;
+        font-size:18px !important;
+      }
+      
+      .map-controls-container {
+        padding:10px 0;
+        gap:6px;
+      }
+      
+      .map-controls-container .btn {
+        padding:8px 10px;
+        font-size:11px;
+        min-width:100px;
+        max-width:130px;
+        flex:1 1 auto;
       }
       
       .profile-stats{
         grid-template-columns:repeat(2, 1fr);
+        gap:10px;
       }
       
       .spot-actions .btn{
@@ -1121,6 +1198,31 @@
       
       .settings-grid{
         grid-template-columns:1fr;
+        gap:12px;
+      }
+      
+      .stat-card{
+        padding:12px;
+      }
+      
+      .stat-value{
+        font-size:20px;
+      }
+      
+      .tabs{
+        overflow-x:auto;
+        scrollbar-width:none;
+        padding-bottom:0;
+      }
+      
+      .tabs::-webkit-scrollbar{
+        display:none;
+      }
+      
+      .tab{
+        padding:8px 12px;
+        font-size:12px;
+        white-space:nowrap;
       }
     }
     
@@ -1155,14 +1257,63 @@
       
       .profile-stats{
         grid-template-columns:1fr;
+        gap:8px;
       }
       
       .spot-actions .btn{
         min-width:100%;
       }
       
+      /* MAP FIXES FOR SMALL MOBILE */
+      .map-container {
+        height:65vh !important;
+        min-height:350px;
+        max-height:500px;
+      }
+      
       #map {
-        height: 300px;
+        min-height:300px;
+      }
+      
+      .leaflet-container {
+        min-height:300px;
+      }
+      
+      .map-controls-container {
+        flex-direction:column;
+        align-items:stretch;
+        gap:6px;
+      }
+      
+      .map-controls-container .btn {
+        min-width:100%;
+        max-width:100%;
+        padding:10px;
+      }
+      
+      .leaflet-popup-content-wrapper {
+        max-width:200px !important;
+        padding:6px !important;
+      }
+      
+      .leaflet-popup-content {
+        font-size:11px !important;
+        line-height:1.3 !important;
+      }
+    }
+    
+    @media (max-width:320px){
+      .map-container {
+        height:60vh !important;
+        min-height:300px;
+      }
+      
+      #map {
+        min-height:250px;
+      }
+      
+      .leaflet-container {
+        min-height:250px;
       }
     }
 
@@ -1425,17 +1576,15 @@
       </div>
 
       <div id="tab-map" class="hidden">
-        <div class="card">
-          <div class="map-container">
-            <div id="map"></div>
-          </div>
-          <div class="flex gap-2 mt-2" style="justify-content: center; flex-wrap: wrap;">
-            <button class="btn btn-ghost" onclick="refreshMap()">Aggiorna mappa</button>
-            <button class="btn btn-primary" onclick="zoomToItaly()">Zoom Italia</button>
-            <button class="btn btn-ghost" onclick="toggleMarkers('published')">Solo pubblicati</button>
-            <button class="btn btn-ghost" onclick="toggleMarkers('acquired')">Solo ottenuti</button>
-            <button class="btn btn-primary" onclick="toggleMarkers('all')">Tutti</button>
-          </div>
+        <div class="map-container">
+          <div id="map"></div>
+        </div>
+        <div class="map-controls-container">
+          <button class="btn btn-ghost" onclick="refreshMap()">🔄 Aggiorna</button>
+          <button class="btn btn-primary" onclick="zoomToItaly()">🗺️ Zoom Italia</button>
+          <button class="btn btn-ghost" onclick="toggleMarkers('published')">📝 Pubblicati</button>
+          <button class="btn btn-ghost" onclick="toggleMarkers('acquired')">🏆 Ottenuti</button>
+          <button class="btn btn-primary" onclick="toggleMarkers('all')">🌍 Tutti</button>
         </div>
       </div>
     </section>
@@ -1573,7 +1722,7 @@
 
   <script>
     // ========== CONSTANTS ==========
-    const STORAGE_KEY = 'spotswap_v9';
+    const STORAGE_KEY = 'spotswap_v10';
     const VERIFICATION_TIME = 10000; // 10 seconds
 
     // ========== STATE ==========
@@ -1600,6 +1749,7 @@
     let map = null;
     let markers = [];
     let currentMapFilter = 'all';
+    let mapInitialized = false;
 
     // ========== INIT ==========
     function init() {
@@ -1609,6 +1759,15 @@
       showView('market');
       updateUI();
       startVerificationChecker();
+      
+      // Inizializza la mappa se il tab è attivo (per mobile)
+      if (window.innerWidth <= 768) {
+        setTimeout(() => {
+          if (document.getElementById('view-my-spots') && !document.getElementById('view-my-spots').classList.contains('hidden')) {
+            initMap();
+          }
+        }, 500);
+      }
     }
 
     // ========== STORAGE ==========
@@ -1649,6 +1808,16 @@
       if (view === 'my-spots') renderMySpots();
       
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+      // Inizializza la mappa se si passa al tab mappa
+      if (view === 'my-spots') {
+        setTimeout(() => {
+          const mapTab = document.querySelector('[data-tab="map"]');
+          if (mapTab && mapTab.classList.contains('active')) {
+            initMap();
+          }
+        }, 100);
+      }
     }
 
     // ========== EVENT LISTENERS ==========
@@ -1701,6 +1870,15 @@
           }
         });
       });
+      
+      // Resize handler per la mappa
+      window.addEventListener('resize', function() {
+        if (map) {
+          setTimeout(() => {
+            map.invalidateSize();
+          }, 200);
+        }
+      });
     }
 
     // ========== MAP FUNCTIONS ==========
@@ -1719,11 +1897,20 @@
       L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
         subdomains: 'abcd',
-        maxZoom: 19
+        maxZoom: 19,
+        detectRetina: true
       }).addTo(map);
 
       // Aggiungi i marker
       addMarkersToMap();
+      
+      // Force resize per mobile
+      setTimeout(() => {
+        if (map) {
+          map.invalidateSize();
+          mapInitialized = true;
+        }
+      }, 300);
     }
 
     function addMarkersToMap() {
@@ -1800,32 +1987,51 @@
           }
         }
         
-        // Crea il marker
+        // Crea il marker con icona personalizzata
         const markerColor = spot.acquired ? '#22c55e' : '#dc2626';
+        const markerHtml = `
+          <div style="
+            background-color: ${markerColor}; 
+            width: 24px; 
+            height: 24px; 
+            border-radius: 50%; 
+            border: 3px solid white; 
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+          ">
+            ${spot.acquired ? '✓' : '●'}
+          </div>
+        `;
+        
         const markerIcon = L.divIcon({
           className: 'custom-marker',
-          html: `<div style="background-color: ${markerColor}; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.5);"></div>`,
-          iconSize: [24, 24],
-          iconAnchor: [12, 12]
+          html: markerHtml,
+          iconSize: [30, 30],
+          iconAnchor: [15, 15],
+          popupAnchor: [0, -15]
         });
         
         const marker = L.marker([lat, lng], { icon: markerIcon })
           .addTo(map)
           .bindPopup(`
-            <div style="color: var(--text); background: var(--card); padding: 10px; border-radius: 8px; max-width: 250px;">
-              <strong>${escapeHtml(spot.give)}</strong>
-              <div style="font-size: 12px; margin-top: 4px; color: var(--text-muted);">
+            <div style="color: var(--text); max-width: 250px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+              <strong style="font-size: 14px; display: block; margin-bottom: 5px;">${escapeHtml(spot.give)}</strong>
+              <div style="font-size: 12px; color: #999; margin-bottom: 8px;">
                 📍 ${escapeHtml(spot.region)}
               </div>
-              <div style="font-size: 11px; margin-top: 4px;">
+              <div style="font-size: 11px; margin-bottom: 10px; padding: 5px; background: #1a1a1a; border-radius: 4px;">
                 ${spot.acquired ? '✅ Ottenuto' : '📝 Pubblicato'}
                 ${spot.offeredForTrade ? ' • 🔄 In offerta' : ''}
               </div>
-              <div style="margin-top: 8px; display: flex; gap: 6px;">
-                <button onclick="viewSpotDetail('${spot.id}')" style="background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; flex: 1;">
-                  Dettagli
-                </button>
-              </div>
+              <button onclick="viewSpotDetail('${spot.id}'); if(window.map && window.map._popup) window.map._popup.close();" 
+                style="background: #dc2626; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-size: 12px; width: 100%;">
+                Vedi dettagli
+              </button>
             </div>
           `);
         
@@ -1836,10 +2042,26 @@
       if (markers.length > 0) {
         const group = new L.featureGroup(markers);
         map.fitBounds(group.getBounds().pad(0.1));
+        
+        // Per mobile, zoom un po' più indietro
+        if (window.innerWidth <= 768 && markers.length > 1) {
+          setTimeout(() => {
+            map.setZoom(map.getZoom() - 1);
+          }, 100);
+        }
       } else {
         // Se non ci sono marker, mostra tutta l'Italia
         const bounds = L.latLngBounds([[47.09, 6.63], [36.65, 18.48]]);
         map.fitBounds(bounds);
+      }
+      
+      // Force invalidate size per mobile
+      if (window.innerWidth <= 768) {
+        setTimeout(() => {
+          if (map) {
+            map.invalidateSize();
+          }
+        }, 500);
       }
     }
 
@@ -1861,7 +2083,7 @@
     function toggleMarkers(filter) {
       currentMapFilter = filter;
       addMarkersToMap();
-      showToast(`Mostrando spot: ${filter === 'all' ? 'Tutti' : filter === 'published' ? 'Pubblicati' : 'Ottenuti'}`, 'info');
+      showToast(`Mostrando: ${filter === 'all' ? 'Tutti gli spot' : filter === 'published' ? 'Spot pubblicati' : 'Spot ottenuti'}`, 'info');
     }
 
     // ========== MARKET ==========
