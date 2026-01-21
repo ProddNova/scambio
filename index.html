@@ -4,6 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>SpotSwap — Scambia spot</title>
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+   integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+   crossorigin=""/>
   <style>
     :root{
       --bg:#0d0d0d;
@@ -805,71 +809,53 @@
       position:relative;
       min-height:500px;
       width:100%;
-      background-image:url('https://maps.googleapis.com/maps/api/staticmap?center=Italy&zoom=5&size=800x600&maptype=terrain&key=AIzaSyDummyKey&scale=2&format=jpg');
-      background-size:cover;
-      background-position:center;
-      background-repeat:no-repeat;
     }
     
-    .map-placeholder{
-      position:absolute;
-      inset:0;
-      background:linear-gradient(180deg, rgba(13,13,13,0.8) 0%, rgba(13,13,13,0.6) 100%);
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      padding:20px;
-      text-align:center;
+    #map {
+      width: 100%;
+      height: 500px;
+      border-radius: var(--radius);
     }
     
-    .map-spot-marker{
-      position:absolute;
-      width:20px;
-      height:20px;
-      background:var(--primary);
-      border-radius:50%;
-      border:2px solid white;
-      transform:translate(-50%, -50%);
-      cursor:pointer;
-      box-shadow:0 2px 6px rgba(0,0,0,.5);
-      z-index:10;
-      transition:all 0.2s ease;
+    .leaflet-container {
+      background: var(--bg-light) !important;
+      font-family: inherit !important;
     }
     
-    .map-spot-marker:hover{
-      transform:translate(-50%, -50%) scale(1.3);
-      z-index:20;
-      background:var(--primary-light);
+    .leaflet-popup-content {
+      color: var(--text) !important;
+      background: var(--card) !important;
     }
     
-    .map-spot-tooltip{
-      position:absolute;
-      background:var(--card);
-      border:1px solid var(--border);
-      padding:10px;
-      border-radius:8px;
-      font-size:12px;
-      min-width:180px;
-      max-width:250px;
-      transform:translate(-50%, -100%);
-      margin-top:-10px;
-      z-index:30;
-      display:none;
-      box-shadow:var(--shadow-lg);
+    .leaflet-popup-content-wrapper {
+      background: var(--card) !important;
+      border: 1px solid var(--border) !important;
+      color: var(--text) !important;
+      border-radius: 8px !important;
     }
     
-    .map-spot-marker:hover .map-spot-tooltip{
-      display:block;
+    .leaflet-popup-tip {
+      background: var(--card) !important;
+      border: 1px solid var(--border) !important;
     }
     
-    .map-spot-marker.acquired{
-      background:var(--success);
+    .leaflet-control-attribution {
+      background: rgba(0,0,0,0.7) !important;
+      color: var(--text-muted) !important;
     }
     
-    .map-spot-marker.acquired:hover{
-      background:var(--success);
-      filter:brightness(1.2);
+    .leaflet-control-attribution a {
+      color: var(--primary-light) !important;
+    }
+    
+    .leaflet-control-zoom a {
+      background: var(--card) !important;
+      color: var(--text) !important;
+      border-color: var(--border) !important;
+    }
+    
+    .leaflet-control-zoom a:hover {
+      background: var(--card-hover) !important;
     }
 
     /* PROFILE STATS */
@@ -1121,9 +1107,8 @@
         font-size:11px;
       }
       
-      .map-container{
-        min-height:400px;
-        background-image:url('https://maps.googleapis.com/maps/api/staticmap?center=Italy&zoom=5&size=400x400&maptype=terrain&key=AIzaSyDummyKey&scale=2&format=jpg');
+      #map {
+        height: 400px;
       }
       
       .profile-stats{
@@ -1136,16 +1121,6 @@
       
       .settings-grid{
         grid-template-columns:1fr;
-      }
-      
-      .map-spot-marker{
-        width:16px;
-        height:16px;
-      }
-      
-      .map-spot-tooltip{
-        min-width:150px;
-        font-size:11px;
       }
     }
     
@@ -1186,8 +1161,8 @@
         min-width:100%;
       }
       
-      .map-container{
-        min-height:300px;
+      #map {
+        height: 300px;
       }
     }
 
@@ -1451,16 +1426,15 @@
 
       <div id="tab-map" class="hidden">
         <div class="card">
-          <div class="map-container" id="map-view">
-            <div class="map-placeholder">
-              <h3 style="margin-bottom:12px">Mappa dei tuoi spot</h3>
-              <p class="text-muted" style="margin-bottom:16px">Visualizza tutti i tuoi spot sulla mappa</p>
-              <div class="flex gap-2" style="flex-wrap:wrap; justify-content:center;">
-                <button class="btn btn-ghost" onclick="refreshMap()">Aggiorna mappa</button>
-                <button class="btn btn-primary" onclick="zoomToItaly()">Zoom Italia</button>
-              </div>
-            </div>
-            <div id="map-markers"></div>
+          <div class="map-container">
+            <div id="map"></div>
+          </div>
+          <div class="flex gap-2 mt-2" style="justify-content: center; flex-wrap: wrap;">
+            <button class="btn btn-ghost" onclick="refreshMap()">Aggiorna mappa</button>
+            <button class="btn btn-primary" onclick="zoomToItaly()">Zoom Italia</button>
+            <button class="btn btn-ghost" onclick="toggleMarkers('published')">Solo pubblicati</button>
+            <button class="btn btn-ghost" onclick="toggleMarkers('acquired')">Solo ottenuti</button>
+            <button class="btn btn-primary" onclick="toggleMarkers('all')">Tutti</button>
           </div>
         </div>
       </div>
@@ -1592,9 +1566,14 @@
   <!-- TOAST -->
   <div class="toast" id="toast"></div>
 
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+   integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+   crossorigin=""></script>
+
   <script>
     // ========== CONSTANTS ==========
-    const STORAGE_KEY = 'spotswap_v8';
+    const STORAGE_KEY = 'spotswap_v9';
     const VERIFICATION_TIME = 10000; // 10 seconds
 
     // ========== STATE ==========
@@ -1616,6 +1595,11 @@
       currentRequestId: null,
       selectedOfferSpots: []
     };
+
+    // ========== MAP VARIABLES ==========
+    let map = null;
+    let markers = [];
+    let currentMapFilter = 'all';
 
     // ========== INIT ==========
     function init() {
@@ -1708,12 +1692,176 @@
           document.getElementById('tab-map').classList.toggle('hidden', tabName !== 'map');
           
           if (tabName === 'map') {
-            renderMap();
+            // Dà un po' di tempo per il rendering del DOM
+            setTimeout(() => {
+              initMap();
+            }, 100);
           } else if (tabName === 'profile') {
             loadProfileSettings();
           }
         });
       });
+    }
+
+    // ========== MAP FUNCTIONS ==========
+    function initMap() {
+      // Se la mappa esiste già, rimuovila e ricreala
+      if (map) {
+        map.remove();
+        markers.forEach(marker => marker.remove());
+        markers = [];
+      }
+
+      // Crea la mappa
+      map = L.map('map').setView([41.8719, 12.5674], 6); // Centro Italia
+
+      // Aggiungi tile layer scuro
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 19
+      }).addTo(map);
+
+      // Aggiungi i marker
+      addMarkersToMap();
+    }
+
+    function addMarkersToMap() {
+      // Recupera tutti gli spot dell'utente
+      let userSpots = state.spots.filter(s => 
+        (s.author === state.user.username && !s.acquired && !s.offeredForTrade) || 
+        (s.acquired && s.currentOwner === state.user.username)
+      );
+
+      // Applica filtro se necessario
+      if (currentMapFilter === 'published') {
+        userSpots = userSpots.filter(s => !s.acquired);
+      } else if (currentMapFilter === 'acquired') {
+        userSpots = userSpots.filter(s => s.acquired);
+      }
+
+      // Se non ci sono spot, mostra messaggio
+      if (userSpots.length === 0) {
+        const bounds = L.latLngBounds([[47.09, 6.63], [36.65, 18.48]]); // Bounds Italia
+        map.fitBounds(bounds);
+        return;
+      }
+
+      // Aggiungi i marker
+      userSpots.forEach(spot => {
+        let lat, lng;
+        
+        // Se lo spot ha coordinate, le usiamo
+        if (spot.coordinates && spot.coordinates.includes(',')) {
+          const coords = spot.coordinates.split(',').map(c => parseFloat(c.trim()));
+          if (coords.length === 2 && !isNaN(coords[0]) && !isNaN(coords[1])) {
+            lat = coords[0];
+            lng = coords[1];
+          }
+        }
+        
+        // Se non ci sono coordinate valide, usiamo coordinate basate sulla regione
+        if (!lat || !lng) {
+          // Mappa regionale semplificata
+          const regionMap = {
+            'lombardia': { lat: 45.4642, lng: 9.1900 },
+            'bergamo': { lat: 45.6983, lng: 9.6773 },
+            'piemonte': { lat: 45.0703, lng: 7.6869 },
+            'torino': { lat: 45.0703, lng: 7.6869 },
+            'trentino': { lat: 46.4983, lng: 11.3548 },
+            'alto adige': { lat: 46.4983, lng: 11.3548 },
+            'valle d\'aosta': { lat: 45.7376, lng: 7.3207 },
+            'toscana': { lat: 43.7696, lng: 11.2558 },
+            'firenze': { lat: 43.7696, lng: 11.2558 },
+            'liguria': { lat: 44.4056, lng: 8.9463 },
+            'genova': { lat: 44.4056, lng: 8.9463 },
+            'emilia': { lat: 44.4949, lng: 11.3426 },
+            'romagna': { lat: 44.4949, lng: 11.3426 },
+            'umbria': { lat: 43.1107, lng: 12.3908 },
+            'perugia': { lat: 43.1107, lng: 12.3908 },
+            'veneto': { lat: 45.4408, lng: 12.3155 },
+            'venezia': { lat: 45.4408, lng: 12.3155 },
+            'lago di como': { lat: 45.8170, lng: 9.0856 },
+            'como': { lat: 45.8170, lng: 9.0856 },
+            'sardegna': { lat: 39.1642, lng: 8.5219 },
+            'carbonia': { lat: 39.1642, lng: 8.5219 }
+          };
+          
+          const regionKey = spot.region.toLowerCase().split('-')[0].trim();
+          const regionCoords = regionMap[regionKey];
+          
+          if (regionCoords) {
+            lat = regionCoords.lat;
+            lng = regionCoords.lng;
+          } else {
+            // Coordinate casuali all'interno dell'Italia
+            lat = 41.8719 + (Math.random() - 0.5) * 5;
+            lng = 12.5674 + (Math.random() - 0.5) * 5;
+          }
+        }
+        
+        // Crea il marker
+        const markerColor = spot.acquired ? '#22c55e' : '#dc2626';
+        const markerIcon = L.divIcon({
+          className: 'custom-marker',
+          html: `<div style="background-color: ${markerColor}; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.5);"></div>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12]
+        });
+        
+        const marker = L.marker([lat, lng], { icon: markerIcon })
+          .addTo(map)
+          .bindPopup(`
+            <div style="color: var(--text); background: var(--card); padding: 10px; border-radius: 8px; max-width: 250px;">
+              <strong>${escapeHtml(spot.give)}</strong>
+              <div style="font-size: 12px; margin-top: 4px; color: var(--text-muted);">
+                📍 ${escapeHtml(spot.region)}
+              </div>
+              <div style="font-size: 11px; margin-top: 4px;">
+                ${spot.acquired ? '✅ Ottenuto' : '📝 Pubblicato'}
+                ${spot.offeredForTrade ? ' • 🔄 In offerta' : ''}
+              </div>
+              <div style="margin-top: 8px; display: flex; gap: 6px;">
+                <button onclick="viewSpotDetail('${spot.id}')" style="background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; flex: 1;">
+                  Dettagli
+                </button>
+              </div>
+            </div>
+          `);
+        
+        markers.push(marker);
+      });
+
+      // Aggiusta la vista per includere tutti i marker
+      if (markers.length > 0) {
+        const group = new L.featureGroup(markers);
+        map.fitBounds(group.getBounds().pad(0.1));
+      } else {
+        // Se non ci sono marker, mostra tutta l'Italia
+        const bounds = L.latLngBounds([[47.09, 6.63], [36.65, 18.48]]);
+        map.fitBounds(bounds);
+      }
+    }
+
+    function refreshMap() {
+      if (map) {
+        addMarkersToMap();
+        showToast('Mappa aggiornata', 'success');
+      }
+    }
+
+    function zoomToItaly() {
+      if (map) {
+        const bounds = L.latLngBounds([[47.09, 6.63], [36.65, 18.48]]);
+        map.fitBounds(bounds);
+        showToast('Zoom sulla posizione Italia', 'info');
+      }
+    }
+
+    function toggleMarkers(filter) {
+      currentMapFilter = filter;
+      addMarkersToMap();
+      showToast(`Mostrando spot: ${filter === 'all' ? 'Tutti' : filter === 'published' ? 'Pubblicati' : 'Ottenuti'}`, 'info');
     }
 
     // ========== MARKET ==========
@@ -1984,162 +2132,6 @@
       document.getElementById('acquired-spots').textContent = acquiredSpots;
       document.getElementById('completed-trades').textContent = completedTrades;
       document.getElementById('success-rate').textContent = `${successRate}%`;
-    }
-
-    // ========== MAP FUNCTIONS ==========
-    function renderMap() {
-      const mapContainer = document.getElementById('map-markers');
-      mapContainer.innerHTML = '';
-      
-      // Recupera tutti gli spot dell'utente
-      const userSpots = state.spots.filter(s => 
-        (s.author === state.user.username && !s.acquired && !s.offeredForTrade) || 
-        (s.acquired && s.currentOwner === state.user.username)
-      );
-      
-      if (userSpots.length === 0) {
-        const placeholder = document.querySelector('.map-placeholder');
-        if (placeholder) {
-          placeholder.innerHTML = `
-            <div class="empty-state-icon">🗺️</div>
-            <h3 style="margin-bottom:12px">Nessuno spot sulla mappa</h3>
-            <p class="text-muted" style="margin-bottom:16px">Pubblica o ottieni spot per vederli sulla mappa</p>
-            <div class="flex gap-2" style="flex-wrap:wrap; justify-content:center;">
-              <button class="btn btn-primary" onclick="showView('new')">+ Pubblica spot</button>
-              <button class="btn btn-ghost" onclick="showView('market')">Vai al mercato</button>
-            </div>
-          `;
-        }
-        return;
-      }
-
-      // Dimensioni della mappa
-      const mapWidth = document.getElementById('map-view').offsetWidth;
-      const mapHeight = document.getElementById('map-view').offsetHeight;
-      
-      // Coordinate dell'Italia (latitudine e longitudine)
-      // Nord: 47.09, Sud: 36.65, Ovest: 6.63, Est: 18.48
-      const italyBounds = {
-        north: 47.09,
-        south: 36.65,
-        west: 6.63,
-        east: 18.48
-      };
-
-      // Per ogni spot, crea un marcatore
-      userSpots.forEach(spot => {
-        let lat, lng;
-        
-        // Se lo spot ha coordinate, le usiamo
-        if (spot.coordinates && spot.coordinates.includes(',')) {
-          const coords = spot.coordinates.split(',').map(c => parseFloat(c.trim()));
-          if (coords.length === 2 && !isNaN(coords[0]) && !isNaN(coords[1])) {
-            lat = coords[0];
-            lng = coords[1];
-          }
-        }
-        
-        // Se non ci sono coordinate valide, usiamo coordinate basate sulla regione
-        if (!lat || !lng) {
-          // Mappa regionale semplificata
-          const regionMap = {
-            'lombardia': { lat: 45.4642, lng: 9.1900 },
-            'bergamo': { lat: 45.6983, lng: 9.6773 },
-            'piemonte': { lat: 45.0703, lng: 7.6869 },
-            'torino': { lat: 45.0703, lng: 7.6869 },
-            'trentino': { lat: 46.4983, lng: 11.3548 },
-            'alto adige': { lat: 46.4983, lng: 11.3548 },
-            'valle d\'aosta': { lat: 45.7376, lng: 7.3207 },
-            'toscana': { lat: 43.7696, lng: 11.2558 },
-            'firenze': { lat: 43.7696, lng: 11.2558 },
-            'liguria': { lat: 44.4056, lng: 8.9463 },
-            'genova': { lat: 44.4056, lng: 8.9463 },
-            'emilia': { lat: 44.4949, lng: 11.3426 },
-            'romagna': { lat: 44.4949, lng: 11.3426 },
-            'umbria': { lat: 43.1107, lng: 12.3908 },
-            'perugia': { lat: 43.1107, lng: 12.3908 },
-            'veneto': { lat: 45.4408, lng: 12.3155 },
-            'venezia': { lat: 45.4408, lng: 12.3155 },
-            'lago di como': { lat: 45.8170, lng: 9.0856 },
-            'como': { lat: 45.8170, lng: 9.0856 },
-            'sardegna': { lat: 39.1642, lng: 8.5219 },
-            'carbonia': { lat: 39.1642, lng: 8.5219 }
-          };
-          
-          const regionKey = spot.region.toLowerCase().split('-')[0].trim();
-          const regionCoords = regionMap[regionKey];
-          
-          if (regionCoords) {
-            lat = regionCoords.lat;
-            lng = regionCoords.lng;
-          } else {
-            // Coordinate casuali all'interno dell'Italia
-            lat = italyBounds.south + Math.random() * (italyBounds.north - italyBounds.south);
-            lng = italyBounds.west + Math.random() * (italyBounds.east - italyBounds.west);
-          }
-        }
-        
-        // Calcola la posizione in percentuale sulla mappa
-        const latPercent = 100 - ((lat - italyBounds.south) / (italyBounds.north - italyBounds.south) * 100);
-        const lngPercent = ((lng - italyBounds.west) / (italyBounds.east - italyBounds.west) * 100);
-        
-        // Crea il marcatore
-        const marker = document.createElement('div');
-        marker.className = `map-spot-marker ${spot.acquired ? 'acquired' : ''}`;
-        marker.style.left = `${Math.min(95, Math.max(5, lngPercent))}%`;
-        marker.style.top = `${Math.min(95, Math.max(5, latPercent))}%`;
-        marker.dataset.spotId = spot.id;
-        marker.innerHTML = `
-          <div class="map-spot-tooltip">
-            <strong>${escapeHtml(spot.give)}</strong>
-            <div style="font-size:11px;margin-top:4px">📍 ${escapeHtml(spot.region)}</div>
-            <div style="font-size:11px;margin-top:2px">
-              ${spot.acquired ? '✅ Ottenuto' : '📝 Pubblicato'}
-              ${spot.offeredForTrade ? ' • 🔄 In offerta' : ''}
-            </div>
-            <div class="flex gap-2" style="margin-top:8px">
-              <button class="btn btn-ghost" style="padding:4px 8px;font-size:11px;flex:1" onclick="viewSpotDetail('${spot.id}')">
-                Dettagli
-              </button>
-            </div>
-          </div>
-        `;
-        
-        mapContainer.appendChild(marker);
-      });
-      
-      // Aggiorna il placeholder
-      const placeholder = document.querySelector('.map-placeholder');
-      if (placeholder) {
-        placeholder.innerHTML = `
-          <h3 style="margin-bottom:12px">Mappa dei tuoi spot</h3>
-          <p class="text-muted" style="margin-bottom:16px">${userSpots.length} spot visualizzati sulla mappa</p>
-          <div class="flex gap-2" style="flex-wrap:wrap; justify-content:center;">
-            <button class="btn btn-ghost" onclick="refreshMap()">Aggiorna mappa</button>
-            <button class="btn btn-primary" onclick="zoomToItaly()">Zoom Italia</button>
-          </div>
-          <div style="margin-top:16px;font-size:12px;color:var(--text-muted)">
-            <div style="display:flex;align-items:center;gap:6px;justify-content:center;margin-bottom:4px">
-              <div style="width:12px;height:12px;background:var(--primary);border-radius:50%;"></div>
-              <span>Spot pubblicati</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:6px;justify-content:center">
-              <div style="width:12px;height:12px;background:var(--success);border-radius:50%;"></div>
-              <span>Spot ottenuti</span>
-            </div>
-          </div>
-        `;
-      }
-    }
-
-    function refreshMap() {
-      renderMap();
-      showToast('Mappa aggiornata', 'success');
-    }
-
-    function zoomToItaly() {
-      // Per ora mostra un messaggio
-      showToast('Zoom sulla posizione Italia', 'info');
     }
 
     // ========== REQUESTS ==========
