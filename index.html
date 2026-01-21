@@ -6,20 +6,24 @@
   <title>SpotSwap — Scambia spot</title>
   <style>
     :root{
-      --bg:#0a0e1a;
-      --bg-light:#131720;
-      --card:#1a1f2e;
-      --border:#2a3142;
-      --text:#e8eaf0;
-      --text-muted:#8a92a8;
-      --primary:#6366f1;
-      --primary-hover:#4f46e5;
-      --success:#10b981;
+      --bg:#0d0d0d;
+      --bg-light:#1a1a1a;
+      --card:#1f1f1f;
+      --card-hover:#252525;
+      --border:#2a2a2a;
+      --border-light:#333;
+      --text:#f5f5f5;
+      --text-muted:#999;
+      --primary:#dc2626;
+      --primary-hover:#b91c1c;
+      --primary-light:#ef4444;
+      --success:#22c55e;
       --warning:#f59e0b;
-      --danger:#ef4444;
-      --info:#3b82f6;
-      --radius:12px;
-      --shadow:0 4px 20px rgba(0,0,0,.3);
+      --danger:#dc2626;
+      --info:#6366f1;
+      --radius:10px;
+      --shadow:0 2px 8px rgba(0,0,0,.3);
+      --shadow-lg:0 8px 24px rgba(0,0,0,.4);
     }
     
     *{box-sizing:border-box;margin:0;padding:0}
@@ -28,77 +32,84 @@
       font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
       color:var(--text);
       background:var(--bg);
-      line-height:1.6;
+      line-height:1.5;
+      -webkit-font-smoothing:antialiased;
     }
 
     /* LAYOUT */
     header{
-      background:var(--bg-light);
+      background:linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
       border-bottom:1px solid var(--border);
       position:sticky;
       top:0;
       z-index:100;
+      backdrop-filter:blur(10px);
     }
     
     .header-content{
       max-width:1200px;
       margin:0 auto;
-      padding:16px 20px;
+      padding:12px 20px;
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:20px;
+      gap:16px;
     }
     
     .logo-area{
       display:flex;
       align-items:center;
-      gap:12px;
+      gap:10px;
       flex-shrink:0;
     }
     
     .logo{
-      width:44px;
-      height:44px;
-      background:linear-gradient(135deg,var(--primary),var(--info));
-      border-radius:10px;
+      width:40px;
+      height:40px;
+      background:linear-gradient(135deg,var(--primary),var(--primary-light));
+      border-radius:8px;
       display:grid;
       place-items:center;
-      font-size:20px;
+      font-size:18px;
       font-weight:900;
+      color:white;
+      box-shadow:0 4px 12px rgba(220,38,38,.3);
     }
     
     .brand h1{
-      font-size:20px;
+      font-size:18px;
       color:var(--text);
       white-space:nowrap;
+      font-weight:700;
+      letter-spacing:-0.5px;
     }
     
     .brand p{
-      font-size:12px;
+      font-size:11px;
       color:var(--text-muted);
       white-space:nowrap;
+      font-weight:500;
     }
 
     nav{
       display:flex;
-      gap:8px;
+      gap:6px;
       flex-wrap:wrap;
       justify-content:flex-end;
       flex:1;
-      min-width:0; /* Permette lo shrink */
+      min-width:0;
     }
     
     .nav-btn{
       background:transparent;
       border:1px solid var(--border);
       color:var(--text);
-      padding:10px 16px;
-      border-radius:8px;
+      padding:8px 14px;
+      border-radius:7px;
       cursor:pointer;
-      font-weight:500;
-      transition:all .2s;
-      font-size:14px;
+      font-weight:600;
+      transition:all .2s cubic-bezier(0.4, 0, 0.2, 1);
+      font-size:13px;
       position:relative;
       white-space:nowrap;
       flex-shrink:0;
@@ -107,32 +118,35 @@
     .nav-btn:hover{
       background:var(--card);
       border-color:var(--primary);
+      transform:translateY(-1px);
     }
     
     .nav-btn.active{
-      background:var(--primary);
+      background:linear-gradient(135deg,var(--primary),var(--primary-light));
       border-color:var(--primary);
       color:white;
+      box-shadow:0 4px 12px rgba(220,38,38,.25);
     }
 
     .nav-btn .badge-count{
       position:absolute;
       top:-6px;
       right:-6px;
-      background:var(--danger);
+      background:var(--primary);
       color:white;
       border-radius:10px;
       padding:2px 6px;
-      font-size:11px;
+      font-size:10px;
       font-weight:700;
-      min-width:18px;
+      min-width:16px;
       text-align:center;
+      box-shadow:0 2px 6px rgba(220,38,38,.4);
     }
 
     .container{
       max-width:1200px;
       margin:0 auto;
-      padding:24px 20px;
+      padding:20px;
     }
 
     /* CARDS */
@@ -140,23 +154,43 @@
       background:var(--card);
       border:1px solid var(--border);
       border-radius:var(--radius);
-      padding:24px;
-      margin-bottom:20px;
+      padding:20px;
+      margin-bottom:16px;
+      transition:all .3s ease;
     }
 
     .spot-card{
       background:var(--card);
       border:1px solid var(--border);
       border-radius:var(--radius);
-      padding:20px;
+      padding:16px;
       cursor:pointer;
-      transition:all .2s;
+      transition:all .3s cubic-bezier(0.4, 0, 0.2, 1);
+      position:relative;
+      overflow:hidden;
+    }
+    
+    .spot-card::before{
+      content:'';
+      position:absolute;
+      top:0;
+      left:0;
+      right:0;
+      height:2px;
+      background:linear-gradient(90deg,var(--primary),var(--primary-light));
+      opacity:0;
+      transition:opacity .3s ease;
     }
     
     .spot-card:hover{
       border-color:var(--primary);
-      transform:translateY(-2px);
-      box-shadow:var(--shadow);
+      transform:translateY(-4px);
+      box-shadow:var(--shadow-lg);
+      background:var(--card-hover);
+    }
+    
+    .spot-card:hover::before{
+      opacity:1;
     }
 
     .spot-header{
@@ -164,45 +198,60 @@
       justify-content:space-between;
       align-items:flex-start;
       gap:12px;
-      margin-bottom:12px;
+      margin-bottom:10px;
     }
 
     .spot-title{
-      font-size:16px;
-      font-weight:600;
-      margin-bottom:6px;
+      font-size:15px;
+      font-weight:700;
+      margin-bottom:4px;
+      color:var(--text);
+      letter-spacing:-0.3px;
     }
 
     .spot-meta{
-      font-size:13px;
+      font-size:12px;
       color:var(--text-muted);
+      display:flex;
+      align-items:center;
+      gap:4px;
+      font-weight:500;
     }
 
     .spot-exchange{
       background:var(--bg-light);
-      border:1px dashed var(--border);
-      border-radius:8px;
-      padding:12px;
-      margin:12px 0;
-      font-size:14px;
+      border:1px solid var(--border);
+      border-radius:7px;
+      padding:10px;
+      margin:10px 0;
+      font-size:13px;
     }
 
     .spot-exchange-row{
       display:flex;
       align-items:center;
-      gap:10px;
+      gap:8px;
       flex-wrap:wrap;
+      margin-bottom:4px;
+    }
+    
+    .spot-exchange-row:last-child{
+      margin-bottom:0;
     }
 
     .spot-exchange strong{
       color:var(--primary);
+      font-weight:700;
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:0.5px;
     }
 
     .tags{
       display:flex;
       flex-wrap:wrap;
-      gap:8px;
-      margin-top:12px;
+      gap:6px;
+      margin-top:10px;
     }
 
     /* BADGES */
@@ -210,21 +259,23 @@
       display:inline-flex;
       align-items:center;
       gap:4px;
-      padding:4px 10px;
-      border-radius:6px;
-      font-size:12px;
-      font-weight:500;
+      padding:4px 8px;
+      border-radius:5px;
+      font-size:11px;
+      font-weight:700;
       border:1px solid;
+      text-transform:uppercase;
+      letter-spacing:0.3px;
     }
 
     .badge-primary{
-      background:rgba(99,102,241,.15);
+      background:rgba(220,38,38,.15);
       border-color:var(--primary);
-      color:var(--primary);
+      color:var(--primary-light);
     }
 
     .badge-success{
-      background:rgba(16,185,129,.15);
+      background:rgba(34,197,94,.15);
       border-color:var(--success);
       color:var(--success);
     }
@@ -236,44 +287,51 @@
     }
 
     .badge-danger{
-      background:rgba(239,68,68,.15);
+      background:rgba(220,38,38,.15);
       border-color:var(--danger);
       color:var(--danger);
     }
 
     .badge-info{
-      background:rgba(59,130,246,.15);
+      background:rgba(99,102,241,.15);
       border-color:var(--info);
       color:var(--info);
     }
 
     /* BUTTONS */
     .btn{
-      padding:10px 20px;
-      border-radius:8px;
+      padding:10px 18px;
+      border-radius:7px;
       border:1px solid;
-      font-weight:500;
+      font-weight:600;
       cursor:pointer;
-      transition:all .2s;
-      font-size:14px;
+      transition:all .2s cubic-bezier(0.4, 0, 0.2, 1);
+      font-size:13px;
       text-align:center;
       display:inline-block;
     }
 
     .btn-primary{
-      background:var(--primary);
+      background:linear-gradient(135deg,var(--primary),var(--primary-light));
       border-color:var(--primary);
       color:white;
+      box-shadow:0 4px 12px rgba(220,38,38,.2);
     }
 
     .btn-primary:hover{
-      background:var(--primary-hover);
+      transform:translateY(-2px);
+      box-shadow:0 6px 16px rgba(220,38,38,.3);
     }
 
     .btn-success{
       background:var(--success);
       border-color:var(--success);
       color:white;
+    }
+    
+    .btn-success:hover{
+      transform:translateY(-2px);
+      box-shadow:0 4px 12px rgba(34,197,94,.3);
     }
 
     .btn-danger{
@@ -290,11 +348,12 @@
 
     .btn-ghost:hover{
       background:var(--card);
+      border-color:var(--border-light);
     }
 
     .btn-lg{
-      padding:14px 28px;
-      font-size:16px;
+      padding:12px 24px;
+      font-size:14px;
       width:100%;
     }
 
@@ -305,15 +364,16 @@
 
     /* FORMS */
     .form-group{
-      margin-bottom:20px;
+      margin-bottom:16px;
     }
 
     .form-label{
       display:block;
-      font-weight:500;
-      margin-bottom:8px;
-      font-size:14px;
+      font-weight:600;
+      margin-bottom:6px;
+      font-size:13px;
       color:var(--text);
+      letter-spacing:0.3px;
     }
 
     .form-input,
@@ -323,9 +383,9 @@
       background:var(--bg-light);
       border:1px solid var(--border);
       color:var(--text);
-      padding:12px 14px;
-      border-radius:8px;
-      font-size:14px;
+      padding:10px 12px;
+      border-radius:7px;
+      font-size:13px;
       transition:all .2s;
       font-family:inherit;
     }
@@ -335,6 +395,7 @@
     .form-textarea:focus{
       outline:none;
       border-color:var(--primary);
+      box-shadow:0 0 0 3px rgba(220,38,38,.1);
     }
 
     .form-textarea{
@@ -343,9 +404,10 @@
     }
 
     .form-hint{
-      font-size:12px;
+      font-size:11px;
       color:var(--text-muted);
-      margin-top:6px;
+      margin-top:4px;
+      font-weight:500;
     }
 
     .form-row{
@@ -358,26 +420,35 @@
       display:flex;
       align-items:flex-start;
       gap:10px;
-      padding:14px;
+      padding:12px;
       background:var(--bg-light);
       border:1px solid var(--border);
-      border-radius:8px;
+      border-radius:7px;
       cursor:pointer;
+      transition:all .2s;
+    }
+    
+    .checkbox-label:hover{
+      border-color:var(--border-light);
+      background:var(--card);
     }
 
     .checkbox-label input{
-      margin-top:3px;
+      margin-top:2px;
     }
 
     /* GRID */
     .grid{
       display:grid;
-      grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
-      gap:16px;
+      grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+      gap:14px;
     }
 
     @media (max-width:768px){
-      .grid{grid-template-columns:1fr}
+      .grid{
+        grid-template-columns:1fr;
+        gap:12px;
+      }
     }
 
     /* FILTERS */
@@ -385,20 +456,22 @@
       background:var(--card);
       border:1px solid var(--border);
       border-radius:var(--radius);
-      padding:20px;
-      margin-bottom:20px;
+      padding:16px;
+      margin-bottom:16px;
     }
 
     /* ALERT */
     .alert{
-      padding:16px;
-      border-radius:8px;
-      margin-bottom:20px;
+      padding:12px 16px;
+      border-radius:7px;
+      margin-bottom:16px;
       border:1px solid;
+      font-size:13px;
+      font-weight:500;
     }
 
     .alert-info{
-      background:rgba(59,130,246,.1);
+      background:rgba(99,102,241,.1);
       border-color:var(--info);
       color:var(--text);
     }
@@ -410,7 +483,7 @@
     }
 
     .alert-success{
-      background:rgba(16,185,129,.1);
+      background:rgba(34,197,94,.1);
       border-color:var(--success);
       color:var(--text);
     }
@@ -419,12 +492,19 @@
     .modal-overlay{
       position:fixed;
       inset:0;
-      background:rgba(0,0,0,.7);
+      background:rgba(0,0,0,.85);
+      backdrop-filter:blur(4px);
       z-index:999;
       display:none;
       align-items:center;
       justify-content:center;
       padding:20px;
+      animation:fadeIn .2s ease;
+    }
+
+    @keyframes fadeIn{
+      from{opacity:0}
+      to{opacity:1}
     }
 
     .modal-overlay.show{
@@ -433,25 +513,41 @@
 
     .modal{
       background:var(--card);
-      border:1px solid var(--border);
+      border:1px solid var(--border-light);
       border-radius:var(--radius);
-      padding:24px;
+      padding:20px;
       max-width:600px;
       width:100%;
       max-height:90vh;
       overflow-y:auto;
+      box-shadow:var(--shadow-lg);
+      animation:slideUp .3s ease;
+    }
+
+    @keyframes slideUp{
+      from{
+        opacity:0;
+        transform:translateY(20px);
+      }
+      to{
+        opacity:1;
+        transform:translateY(0);
+      }
     }
 
     .modal-header{
       display:flex;
       justify-content:space-between;
       align-items:center;
-      margin-bottom:20px;
+      margin-bottom:16px;
+      padding-bottom:12px;
+      border-bottom:1px solid var(--border);
     }
 
     .modal-title{
-      font-size:20px;
-      font-weight:600;
+      font-size:18px;
+      font-weight:700;
+      letter-spacing:-0.5px;
     }
 
     .modal-close{
@@ -463,6 +559,16 @@
       padding:0;
       width:32px;
       height:32px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:6px;
+      transition:all .2s;
+    }
+    
+    .modal-close:hover{
+      background:var(--bg-light);
+      color:var(--text);
     }
 
     /* TRADE REQUEST */
@@ -470,18 +576,25 @@
       background:var(--bg-light);
       border:1px solid var(--border);
       border-radius:8px;
-      padding:16px;
-      margin-bottom:16px;
+      padding:14px;
+      margin-bottom:12px;
+      transition:all .2s;
+    }
+    
+    .trade-request:hover{
+      border-color:var(--border-light);
     }
 
     .trade-status{
       display:inline-flex;
       align-items:center;
-      gap:6px;
-      padding:6px 12px;
+      gap:4px;
+      padding:5px 10px;
       border-radius:6px;
-      font-size:13px;
-      font-weight:500;
+      font-size:11px;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:0.3px;
     }
 
     .trade-status.pending{
@@ -490,58 +603,62 @@
     }
 
     .trade-status.verifying{
-      background:rgba(59,130,246,.15);
+      background:rgba(99,102,241,.15);
       color:var(--info);
     }
 
     .trade-status.accepted{
-      background:rgba(16,185,129,.15);
+      background:rgba(34,197,94,.15);
       color:var(--success);
     }
 
     .trade-status.rejected{
-      background:rgba(239,68,68,.15);
+      background:rgba(220,38,38,.15);
       color:var(--danger);
     }
 
     .spot-selector{
       background:var(--bg-light);
       border:1px solid var(--border);
-      border-radius:8px;
+      border-radius:7px;
       padding:12px;
-      margin-bottom:12px;
+      margin-bottom:10px;
       cursor:pointer;
       transition:all .2s;
     }
 
     .spot-selector:hover{
-      border-color:var(--primary);
+      border-color:var(--border-light);
+      background:var(--card);
     }
 
     .spot-selector.selected{
       border-color:var(--primary);
-      background:rgba(99,102,241,.1);
+      background:rgba(220,38,38,.05);
     }
 
-    .spot-selector input[type="checkbox"]{
+    .spot-selector input[type="checkbox"],
+    .spot-selector input[type="radio"]{
       margin-right:10px;
     }
 
     /* COORDINATES REVEAL */
     .coordinates-box{
-      background:var(--success);
+      background:linear-gradient(135deg,var(--success),#16a34a);
       color:white;
-      padding:16px;
+      padding:14px;
       border-radius:8px;
-      margin:16px 0;
+      margin:12px 0;
       font-family:monospace;
-      font-size:14px;
+      font-size:13px;
+      box-shadow:0 4px 12px rgba(34,197,94,.2);
     }
 
     .coordinates-box strong{
       display:block;
-      margin-bottom:8px;
-      font-size:16px;
+      margin-bottom:6px;
+      font-size:14px;
+      font-weight:700;
     }
 
     /* TOAST */
@@ -550,85 +667,106 @@
       bottom:24px;
       right:24px;
       background:var(--card);
-      border:1px solid var(--border);
+      border:1px solid var(--border-light);
       color:var(--text);
-      padding:16px 20px;
+      padding:14px 18px;
       border-radius:8px;
-      box-shadow:var(--shadow);
+      box-shadow:var(--shadow-lg);
       z-index:1000;
       display:none;
       min-width:250px;
+      font-size:13px;
+      font-weight:600;
+      animation:slideInRight .3s ease;
+    }
+
+    @keyframes slideInRight{
+      from{
+        opacity:0;
+        transform:translateX(100px);
+      }
+      to{
+        opacity:1;
+        transform:translateX(0);
+      }
     }
 
     .toast.show{display:block}
 
     .toast.success{
       border-color:var(--success);
-      background:rgba(16,185,129,.15);
+      background:rgba(34,197,94,.15);
+      color:var(--success);
     }
 
     .toast.error{
       border-color:var(--danger);
-      background:rgba(239,68,68,.15);
+      background:rgba(220,38,38,.15);
+      color:var(--danger);
     }
 
     /* UTILITY */
     .hidden{display:none!important}
     .text-center{text-align:center}
     .text-muted{color:var(--text-muted)}
-    .mt-2{margin-top:16px}
-    .mb-2{margin-bottom:16px}
+    .mt-2{margin-top:12px}
+    .mb-2{margin-bottom:12px}
     .flex{display:flex}
     .flex-between{display:flex;justify-content:space-between;align-items:center}
-    .gap-2{gap:16px}
+    .gap-2{gap:12px}
 
     h2{
-      font-size:24px;
-      margin-bottom:8px;
+      font-size:22px;
+      margin-bottom:6px;
+      font-weight:700;
+      letter-spacing:-0.5px;
     }
 
     h3{
-      font-size:18px;
-      margin-bottom:12px;
+      font-size:16px;
+      margin-bottom:10px;
+      font-weight:700;
+      letter-spacing:-0.3px;
     }
 
     .section-header{
-      margin-bottom:20px;
+      margin-bottom:16px;
     }
 
     .empty-state{
       text-align:center;
-      padding:48px 24px;
+      padding:40px 20px;
       color:var(--text-muted);
     }
 
     .empty-state-icon{
-      font-size:48px;
-      margin-bottom:16px;
-      opacity:.5;
+      font-size:40px;
+      margin-bottom:12px;
+      opacity:.6;
     }
 
     /* TABS */
     .tabs{
       display:flex;
-      gap:8px;
-      margin-bottom:20px;
+      gap:6px;
+      margin-bottom:16px;
       border-bottom:1px solid var(--border);
       overflow-x:auto;
       padding-bottom:2px;
     }
 
     .tab{
-      padding:12px 20px;
+      padding:10px 16px;
       background:transparent;
       border:none;
       color:var(--text-muted);
       cursor:pointer;
       border-bottom:2px solid transparent;
       transition:all .2s;
-      font-weight:500;
+      font-weight:600;
       white-space:nowrap;
       flex-shrink:0;
+      font-size:13px;
     }
 
     .tab:hover{
@@ -640,13 +778,13 @@
       border-bottom-color:var(--primary);
     }
 
-    /* RESPONSIVE - FIX PER MOBILE */
+    /* RESPONSIVE */
     @media (max-width:768px){
       .header-content{
         flex-direction:row;
         flex-wrap:wrap;
-        padding:12px 16px;
-        gap:12px;
+        padding:10px 16px;
+        gap:10px;
       }
       
       .logo-area{
@@ -654,91 +792,6 @@
         min-width:0;
       }
       
-      .brand h1{
-        font-size:18px;
-      }
-      
-      nav{
-        order:2;
-        flex:1 1 100%;
-        overflow-x:auto;
-        padding-bottom:8px;
-        justify-content:flex-start;
-        margin-top:0;
-        -webkit-overflow-scrolling:touch;
-      }
-      
-      nav::-webkit-scrollbar{
-        height:4px;
-      }
-      
-      nav::-webkit-scrollbar-track{
-        background:var(--bg-light);
-        border-radius:2px;
-      }
-      
-      nav::-webkit-scrollbar-thumb{
-        background:var(--border);
-        border-radius:2px;
-      }
-      
-      .nav-btn{
-        padding:8px 12px;
-        font-size:13px;
-        flex-shrink:0;
-      }
-      
-      .nav-btn .badge-count{
-        position:relative;
-        top:0;
-        right:0;
-        margin-left:4px;
-        display:inline-block;
-      }
-
-      .container{
-        padding:16px;
-      }
-      
-      .form-row{
-        grid-template-columns:1fr;
-      }
-
-      .toast{
-        left:16px;
-        right:16px;
-        bottom:16px;
-        min-width:auto;
-      }
-      
-      .grid{
-        grid-template-columns:1fr;
-        gap:12px;
-      }
-      
-      .card{
-        padding:16px;
-      }
-      
-      .spot-card{
-        padding:16px;
-      }
-      
-      .modal{
-        padding:20px 16px;
-      }
-      
-      .section-header h2{
-        font-size:20px;
-      }
-      
-      .filters{
-        padding:16px;
-      }
-    }
-    
-    /* Per schermi molto piccoli */
-    @media (max-width:480px){
       .logo{
         width:36px;
         height:36px;
@@ -753,9 +806,106 @@
         font-size:10px;
       }
       
+      nav{
+        order:2;
+        flex:1 1 100%;
+        overflow-x:auto;
+        padding-bottom:6px;
+        justify-content:flex-start;
+        margin-top:0;
+        -webkit-overflow-scrolling:touch;
+      }
+      
+      nav::-webkit-scrollbar{
+        height:3px;
+      }
+      
+      nav::-webkit-scrollbar-track{
+        background:var(--bg-light);
+      }
+      
+      nav::-webkit-scrollbar-thumb{
+        background:var(--border);
+        border-radius:2px;
+      }
+      
+      .nav-btn{
+        padding:7px 12px;
+        font-size:12px;
+        flex-shrink:0;
+      }
+      
+      .nav-btn .badge-count{
+        position:relative;
+        top:0;
+        right:0;
+        margin-left:4px;
+        display:inline-block;
+      }
+
+      .container{
+        padding:14px;
+      }
+      
+      .form-row{
+        grid-template-columns:1fr;
+      }
+
+      .toast{
+        left:14px;
+        right:14px;
+        bottom:14px;
+        min-width:auto;
+      }
+      
+      .grid{
+        grid-template-columns:1fr;
+        gap:10px;
+      }
+      
+      .card{
+        padding:16px;
+      }
+      
+      .spot-card{
+        padding:14px;
+      }
+      
+      .modal{
+        padding:18px 14px;
+      }
+      
+      .section-header h2{
+        font-size:20px;
+      }
+      
+      .filters{
+        padding:14px;
+      }
+      
+      .spot-title{
+        font-size:14px;
+      }
+      
+      .spot-meta{
+        font-size:11px;
+      }
+    }
+    
+    @media (max-width:480px){
+      .logo{
+        width:32px;
+        height:32px;
+        font-size:14px;
+      }
+      
+      .brand h1{
+        font-size:15px;
+      }
+      
       .nav-btn{
         padding:6px 10px;
-        font-size:12px;
+        font-size:11px;
       }
       
       .tabs{
@@ -763,9 +913,33 @@
       }
       
       .tab{
-        padding:10px 12px;
-        font-size:14px;
+        padding:8px 12px;
+        font-size:12px;
       }
+      
+      .spot-exchange{
+        padding:8px;
+        font-size:12px;
+      }
+    }
+
+    /* CUSTOM SCROLLBAR */
+    ::-webkit-scrollbar{
+      width:8px;
+      height:8px;
+    }
+
+    ::-webkit-scrollbar-track{
+      background:var(--bg-light);
+    }
+
+    ::-webkit-scrollbar-thumb{
+      background:var(--border);
+      border-radius:4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover{
+      background:var(--border-light);
     }
   </style>
 </head>
@@ -1158,7 +1332,7 @@
             <span class="badge badge-primary">${getTimeAgo(spot.createdAt)}</span>
           </div>
 
-          <div class="text-muted" style="margin-top:12px;font-size:13px">
+          <div class="text-muted" style="margin-top:10px;font-size:12px;font-weight:500">
             di ${escapeHtml(spot.author)}
           </div>
         </div>
@@ -1291,7 +1465,7 @@
           <div class="flex-between mb-2">
             <div>
               <strong>${type === 'received' ? 'Da' : 'Per'}: ${escapeHtml(type === 'received' ? req.fromUser : spot.author)}</strong>
-              <div class="text-muted" style="font-size:13px">${getTimeAgo(req.createdAt)}</div>
+              <div class="text-muted" style="font-size:12px;margin-top:2px">${getTimeAgo(req.createdAt)}</div>
             </div>
             ${statusBadge}
           </div>
@@ -1303,9 +1477,9 @@
           <div class="mb-2">
             <strong>Spot offerti in cambio:</strong>
             ${offeredSpots.map(s => `
-              <div style="padding:8px;background:var(--bg);border-radius:6px;margin-top:8px;border:1px solid var(--border)">
+              <div style="padding:8px;background:var(--bg);border-radius:6px;margin-top:6px;border:1px solid var(--border);font-size:12px">
                 ${escapeHtml(s.give)} - ${escapeHtml(s.region)}
-                ${req.selectedSpotId === s.id ? '<span class="badge badge-success" style="margin-left:8px">✓ Scelto</span>' : ''}
+                ${req.selectedSpotId === s.id ? '<span class="badge badge-success" style="margin-left:6px">✓ Scelto</span>' : ''}
               </div>
             `).join('')}
           </div>
@@ -1325,9 +1499,9 @@
       html += '<strong>🎉 Scambio completato! Ecco le coordinate:</strong>';
       
       if (req.fromUser === state.user.username) {
-        html += `<div style="margin-top:8px">📍 ${escapeHtml(spot.give)}: ${escapeHtml(spot.coordinates || 'Non disponibili')}</div>`;
+        html += `<div style="margin-top:6px">📍 ${escapeHtml(spot.give)}: ${escapeHtml(spot.coordinates || 'Non disponibili')}</div>`;
       } else {
-        html += `<div style="margin-top:8px">📍 ${escapeHtml(selectedSpot.give)}: ${escapeHtml(selectedSpot.coordinates || 'Non disponibili')}</div>`;
+        html += `<div style="margin-top:6px">📍 ${escapeHtml(selectedSpot.give)}: ${escapeHtml(selectedSpot.coordinates || 'Non disponibili')}</div>`;
       }
       
       html += '</div>';
@@ -1356,7 +1530,7 @@
           <input type="checkbox" value="${spot.id}" onchange="toggleOfferSpot('${spot.id}')">
           <div>
             <strong>${escapeHtml(spot.give)}</strong>
-            <div class="text-muted" style="font-size:13px">📍 ${escapeHtml(spot.region)}</div>
+            <div class="text-muted" style="font-size:12px;margin-top:2px">📍 ${escapeHtml(spot.region)}</div>
           </div>
         </label>
       `).join('');
@@ -1415,9 +1589,9 @@
           <input type="radio" name="chosen-spot" value="${spot.id}">
           <div>
             <strong>${escapeHtml(spot.give)}</strong>
-            <div class="text-muted" style="font-size:13px">📍 ${escapeHtml(spot.region)}</div>
-            <div style="margin-top:8px;font-size:13px">${escapeHtml(spot.description)}</div>
-            <div class="tags" style="margin-top:8px">
+            <div class="text-muted" style="font-size:12px;margin-top:2px">📍 ${escapeHtml(spot.region)}</div>
+            <div style="margin-top:6px;font-size:12px">${escapeHtml(spot.description)}</div>
+            <div class="tags" style="margin-top:6px">
               <span class="badge badge-info">${spot.category}</span>
             </div>
           </div>
@@ -1574,13 +1748,13 @@
 
         <div class="mb-2">
           <strong>Descrizione:</strong>
-          <p style="margin-top:8px">${escapeHtml(spot.description)}</p>
+          <p style="margin-top:6px;font-size:13px">${escapeHtml(spot.description)}</p>
         </div>
 
         ${spot.status === 'completed' ? `
           <div class="coordinates-box">
             <strong>📍 Coordinate GPS</strong>
-            <div style="margin-top:8px">${escapeHtml(spot.coordinates)}</div>
+            <div style="margin-top:6px">${escapeHtml(spot.coordinates)}</div>
           </div>
         ` : ''}
       `;
@@ -1850,79 +2024,79 @@
       const receivedRequests = [
         {
           id: generateId(),
-          spotId: mySpots[0].id, // Fabbrica tessile
+          spotId: mySpots[0].id,
           fromUser: 'ExplorerIta',
-          offeredSpots: [marketSpots[2].id, marketSpots[3].id], // Zuccherificio e Castello
+          offeredSpots: [marketSpots[2].id, marketSpots[3].id],
           status: 'pending',
-          createdAt: Date.now() - 3600000 // 1 ora fa
+          createdAt: Date.now() - 3600000
         },
         {
           id: generateId(),
-          spotId: mySpots[3].id, // Centrale idroelettrica
+          spotId: mySpots[3].id,
           fromUser: 'LakeExplorer',
-          offeredSpots: [marketSpots[5].id], // Villa sul lago
+          offeredSpots: [marketSpots[5].id],
           status: 'verifying',
           selectedSpotId: marketSpots[5].id,
           verificationStartedAt: Date.now() - 5000,
-          createdAt: Date.now() - 7200000 // 2 ore fa
+          createdAt: Date.now() - 7200000
         },
         {
           id: generateId(),
-          spotId: mySpots[2].id, // Caserma militare
+          spotId: mySpots[2].id,
           fromUser: 'MilitaryFan',
-          offeredSpots: [marketSpots[1].id], // Hotel anni 70
+          offeredSpots: [marketSpots[1].id],
           status: 'accepted',
           selectedSpotId: marketSpots[1].id,
           verificationStartedAt: Date.now() - 15000,
-          createdAt: Date.now() - 86400000 // 1 giorno fa
+          createdAt: Date.now() - 86400000
         },
         {
           id: generateId(),
-          spotId: mySpots[0].id, // Fabbrica tessile
+          spotId: mySpots[0].id,
           fromUser: 'SanatoriumLover',
-          offeredSpots: [marketSpots[0].id], // Sanatorio
+          offeredSpots: [marketSpots[0].id],
           status: 'rejected',
-          createdAt: Date.now() - 172800000 // 2 giorni fa
+          createdAt: Date.now() - 172800000
         },
         {
           id: generateId(),
-          spotId: mySpots[3].id, // Centrale idroelettrica
+          spotId: mySpots[3].id,
           fromUser: 'FactoryFinder',
-          offeredSpots: [marketSpots[2].id, marketSpots[6].id], // Zuccherificio e Miniera
+          offeredSpots: [marketSpots[2].id, marketSpots[6].id],
           status: 'pending',
-          createdAt: Date.now() - 1800000 // 30 minuti fa
+          createdAt: Date.now() - 1800000
         }
       ];
 
-      // Richieste inviate (dall'utente corrente ad altri)
+      // Richieste inviate
       const sentRequests = [
         {
           id: generateId(),
-          spotId: marketSpots[0].id, // Sanatorio
+          spotId: marketSpots[0].id,
           fromUser: state.user.username,
-          offeredSpots: [mySpots[0].id, mySpots[3].id], // Fabbrica e Centrale
+          offeredSpots: [mySpots[0].id, mySpots[3].id],
           status: 'pending',
-          createdAt: Date.now() - 5400000 // 1.5 ore fa
+          createdAt: Date.now() - 5400000
         },
         {
           id: generateId(),
-          spotId: marketSpots[3].id, // Castello
+          spotId: marketSpots[3].id,
           fromUser: state.user.username,
-          offeredSpots: [mySpots[1].id], // Villa liberty
+          offeredSpots: [mySpots[1].id],
           status: 'accepted',
           selectedSpotId: mySpots[1].id,
           verificationStartedAt: Date.now() - 12000,
-          createdAt: Date.now() - 43200000 // 12 ore fa
+          createdAt: Date.now() - 43200000
         },
         {
           id: generateId(),
-          spotId: marketSpots[5].id, // Villa sul lago
+          spotId: marketSpots[5].id,
           fromUser: state.user.username,
-          offeredSpots: [mySpots[0].id], // Fabbrica tessile
+          offeredSpots: [mySpots[0].id],
           status: 'verifying',
           selectedSpotId: mySpots[0].id,
           verificationStartedAt: Date.now() - 3000,
-          createdAt: Date.now() - 3600000 // 1 ora fa
+          createdAt: Date.now() - 3600000
         }
       ];
 
