@@ -830,11 +830,13 @@
       cursor:pointer;
       box-shadow:0 2px 8px rgba(0,0,0,.5);
       z-index:10;
+      transition:all 0.3s ease;
     }
     
     .map-spot-marker:hover{
       transform:translate(-50%, -50%) scale(1.2);
       z-index:20;
+      background:var(--primary-light);
     }
     
     .map-spot-tooltip{
@@ -1119,6 +1121,11 @@
       .settings-grid{
         grid-template-columns:1fr;
       }
+      
+      .map-spot-marker{
+        width:20px;
+        height:20px;
+      }
     }
     
     @media (max-width:480px){
@@ -1299,6 +1306,7 @@
         <button class="tab active" data-tab="published">Pubblicati <span id="published-count">(4)</span></button>
         <button class="tab" data-tab="acquired">Ottenuti <span id="acquired-count">(2)</span></button>
         <button class="tab" data-tab="profile">Profilo</button>
+        <button class="tab" data-tab="map">Mappa</button>
       </div>
 
       <div id="tab-published">
@@ -1417,6 +1425,22 @@
 
         <div class="flex gap-2 mt-2">
           <button class="btn btn-primary" onclick="saveProfileSettings()" style="flex:1">Salva modifiche</button>
+        </div>
+      </div>
+
+      <div id="tab-map" class="hidden">
+        <div class="card">
+          <div class="map-container" id="map-view">
+            <div class="map-placeholder">
+              <h3 style="margin-bottom:12px">Mappa dei tuoi spot</h3>
+              <p class="text-muted" style="margin-bottom:16px">Visualizza tutti i tuoi spot sulla mappa</p>
+              <div class="flex gap-2" style="flex-wrap:wrap; justify-content:center;">
+                <button class="btn btn-ghost" onclick="refreshMap()">Aggiorna mappa</button>
+                <button class="btn btn-primary" onclick="zoomToItaly()">Zoom Italia</button>
+              </div>
+            </div>
+            <div id="map-markers"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -1549,7 +1573,7 @@
 
   <script>
     // ========== CONSTANTS ==========
-    const STORAGE_KEY = 'spotswap_v6';
+    const STORAGE_KEY = 'spotswap_v7';
     const VERIFICATION_TIME = 10000; // 10 seconds
 
     // ========== STATE ==========
@@ -1660,8 +1684,11 @@
           document.getElementById('tab-published').classList.toggle('hidden', tabName !== 'published');
           document.getElementById('tab-acquired').classList.toggle('hidden', tabName !== 'acquired');
           document.getElementById('tab-profile').classList.toggle('hidden', tabName !== 'profile');
+          document.getElementById('tab-map').classList.toggle('hidden', tabName !== 'map');
           
-          if (tabName === 'profile') {
+          if (tabName === 'map') {
+            renderMap();
+          } else if (tabName === 'profile') {
             loadProfileSettings();
           }
         });
@@ -1914,6 +1941,139 @@
       document.getElementById('success-rate').textContent = `${successRate}%`;
     }
 
+    // ========== MAP FUNCTIONS ==========
+    function renderMap() {
+      const mapContainer = document.getElementById('map-markers');
+      mapContainer.innerHTML = '';
+      
+      // Recupera tutti gli spot dell'utente
+      const userSpots = state.spots.filter(s => 
+        s.author === state.user.username || 
+        (s.acquired && s.currentOwner === state.user.username)
+      );
+      
+      if (userSpots.length === 0) {
+        const placeholder = document.querySelector('.map-placeholder');
+        if (placeholder) {
+          placeholder.innerHTML = `
+            <div class="empty-state-icon">🗺️</div>
+            <h3 style="margin-bottom:12px">Nessuno spot sulla mappa</h3>
+            <p class="text-muted" style="margin-bottom:16px">Pubblica o ottieni spot per vederli sulla mappa</p>
+            <div class="flex gap-2" style="flex-wrap:wrap; justify-content:center;">
+              <button class="btn btn-primary" onclick="showView('new')">+ Pubblica spot</button>
+              <button class="btn btn-ghost" onclick="showView('market')">Vai al mercato</button>
+            </div>
+          `;
+        }
+        return;
+      }
+
+      // Dimensioni della mappa (Italia)
+      const mapWidth = document.getElementById('map-view').offsetWidth;
+      const mapHeight = document.getElementById('map-view').offsetHeight;
+      
+      // Coordinate dell'Italia (latitudine e longitudine)
+      // Nord: 47.09, Sud: 36.65, Ovest: 6.63, Est: 18.48
+      const italyBounds = {
+        north: 47.09,
+        south: 36.65,
+        west: 6.63,
+        east: 18.48
+      };
+
+      // Per ogni spot, crea un marcatore
+      userSpots.forEach(spot => {
+        let lat, lng;
+        
+        // Se lo spot ha coordinate, le usiamo
+        if (spot.coordinates && spot.coordinates.includes(',')) {
+          const coords = spot.coordinates.split(',').map(c => parseFloat(c.trim()));
+          if (coords.length === 2 && !isNaN(coords[0]) && !isNaN(coords[1])) {
+            lat = coords[0];
+            lng = coords[1];
+          }
+        }
+        
+        // Se non ci sono coordinate valide, usiamo coordinate basate sulla regione
+        if (!lat || !lng) {
+          // Mappa regionale semplificata
+          const regionMap = {
+            'lombardia': { lat: 45.4642, lng: 9.1900 },
+            'piemonte': { lat: 45.0703, lng: 7.6869 },
+            'trentino': { lat: 46.4983, lng: 11.3548 },
+            'valle d\'aosta': { lat: 45.7376, lng: 7.3207 },
+            'toscana': { lat: 43.7696, lng: 11.2558 },
+            'liguria': { lat: 44.4056, lng: 8.9463 },
+            'emilia': { lat: 44.4949, lng: 11.3426 },
+            'umbria': { lat: 43.1107, lng: 12.3908 },
+            'veneto': { lat: 45.4408, lng: 12.3155 },
+            'lago di como': { lat: 45.8170, lng: 9.0856 },
+            'sardegna': { lat: 39.1642, lng: 8.5219 }
+          };
+          
+          const regionKey = spot.region.toLowerCase().split('-')[0].trim();
+          const regionCoords = regionMap[regionKey];
+          
+          if (regionCoords) {
+            lat = regionCoords.lat;
+            lng = regionCoords.lng;
+          } else {
+            // Coordinate casuali all'interno dell'Italia
+            lat = italyBounds.south + Math.random() * (italyBounds.north - italyBounds.south);
+            lng = italyBounds.west + Math.random() * (italyBounds.east - italyBounds.west);
+          }
+        }
+        
+        // Calcola la posizione in percentuale sulla mappa
+        const latPercent = 100 - ((lat - italyBounds.south) / (italyBounds.north - italyBounds.south) * 100);
+        const lngPercent = ((lng - italyBounds.west) / (italyBounds.east - italyBounds.west) * 100);
+        
+        // Crea il marcatore
+        const marker = document.createElement('div');
+        marker.className = 'map-spot-marker';
+        marker.style.left = `${lngPercent}%`;
+        marker.style.top = `${latPercent}%`;
+        marker.dataset.spotId = spot.id;
+        marker.innerHTML = `
+          <div class="map-spot-tooltip">
+            <strong>${escapeHtml(spot.give)}</strong>
+            <div style="font-size:11px;margin-top:4px">📍 ${escapeHtml(spot.region)}</div>
+            <div style="font-size:11px;margin-top:2px">${spot.acquired ? '✅ Ottenuto' : '📝 Pubblicato'}</div>
+            <div class="flex gap-2" style="margin-top:8px">
+              <button class="btn btn-ghost" style="padding:4px 8px;font-size:11px;flex:1" onclick="viewSpotDetail('${spot.id}')">
+                Dettagli
+              </button>
+            </div>
+          </div>
+        `;
+        
+        mapContainer.appendChild(marker);
+      });
+      
+      // Aggiorna il placeholder
+      const placeholder = document.querySelector('.map-placeholder');
+      if (placeholder) {
+        placeholder.innerHTML = `
+          <h3 style="margin-bottom:12px">Mappa dei tuoi spot</h3>
+          <p class="text-muted" style="margin-bottom:16px">${userSpots.length} spot visualizzati sulla mappa</p>
+          <div class="flex gap-2" style="flex-wrap:wrap; justify-content:center;">
+            <button class="btn btn-ghost" onclick="refreshMap()">Aggiorna mappa</button>
+            <button class="btn btn-primary" onclick="zoomToItaly()">Zoom Italia</button>
+          </div>
+        `;
+      }
+    }
+
+    function refreshMap() {
+      renderMap();
+      showToast('Mappa aggiornata', 'success');
+    }
+
+    function zoomToItaly() {
+      // Per ora mostra un messaggio
+      showToast('Zoom sulla posizione Italia', 'info');
+    }
+
     // ========== REQUESTS ==========
     function renderRequests() {
       // Ricevute: solo pending e verifying dove lo spot è dell'utente
@@ -1981,7 +2141,7 @@
     }
 
     function renderTradeRequest(req, type) {
-      const spot = state.spots.find(s => s.id === r.spotId);
+      const spot = state.spots.find(s => s.id === req.spotId);
       if (!spot) return '';
 
       const offeredSpots = req.offeredSpots.map(id => state.spots.find(s => s.id === id)).filter(Boolean);
