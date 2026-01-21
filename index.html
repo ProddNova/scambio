@@ -66,14 +66,17 @@
     .logo{
       width:40px;
       height:40px;
-      background:linear-gradient(135deg,var(--primary),var(--primary-light));
-      border-radius:8px;
+      border-radius:50%;
       display:grid;
       place-items:center;
-      font-size:18px;
-      font-weight:900;
-      color:white;
+      overflow:hidden;
       box-shadow:0 4px 12px rgba(220,38,38,.3);
+    }
+    
+    .logo img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
     }
     
     .brand h1{
@@ -82,6 +85,7 @@
       white-space:nowrap;
       font-weight:700;
       letter-spacing:-0.5px;
+      line-height:1.2;
     }
     
     .brand p{
@@ -89,6 +93,13 @@
       color:var(--text-muted);
       white-space:nowrap;
       font-weight:500;
+    }
+    
+    .brand .gang-name{
+      font-size:10px;
+      color:var(--primary);
+      margin-top:2px;
+      font-weight:600;
     }
 
     nav{
@@ -625,6 +636,9 @@
       margin-bottom:10px;
       cursor:pointer;
       transition:all .2s;
+      display:flex;
+      align-items:flex-start;
+      gap:12px;
     }
 
     .spot-selector:hover{
@@ -639,7 +653,12 @@
 
     .spot-selector input[type="checkbox"],
     .spot-selector input[type="radio"]{
-      margin-right:10px;
+      margin-top:4px;
+      flex-shrink:0;
+    }
+    
+    .spot-selector-content{
+      flex:1;
     }
 
     /* COORDINATES REVEAL */
@@ -778,6 +797,108 @@
       border-bottom-color:var(--primary);
     }
 
+    /* MAP VIEW */
+    .map-container{
+      background:var(--bg-light);
+      border-radius:var(--radius);
+      overflow:hidden;
+      position:relative;
+      min-height:400px;
+      background-image:url('https://maps.googleapis.com/maps/api/staticmap?center=Italy&zoom=6&size=800x400&maptype=satellite&key=demo');
+      background-size:cover;
+      background-position:center;
+    }
+    
+    .map-overlay{
+      position:absolute;
+      inset:0;
+      background:linear-gradient(180deg, rgba(13,13,13,0.8) 0%, rgba(13,13,13,0.6) 50%, rgba(13,13,13,0.8) 100%);
+      display:flex;
+      flex-direction:column;
+      padding:20px;
+    }
+    
+    .map-spot-marker{
+      position:absolute;
+      width:24px;
+      height:24px;
+      background:var(--primary);
+      border-radius:50%;
+      border:3px solid white;
+      transform:translate(-50%, -50%);
+      cursor:pointer;
+      box-shadow:0 2px 8px rgba(0,0,0,.5);
+      z-index:10;
+    }
+    
+    .map-spot-marker:hover{
+      transform:translate(-50%, -50%) scale(1.2);
+      z-index:20;
+    }
+    
+    .map-spot-tooltip{
+      position:absolute;
+      background:var(--card);
+      border:1px solid var(--border);
+      padding:10px;
+      border-radius:8px;
+      font-size:12px;
+      min-width:150px;
+      transform:translate(-50%, -100%);
+      margin-top:-10px;
+      z-index:30;
+      display:none;
+    }
+    
+    .map-spot-marker:hover .map-spot-tooltip{
+      display:block;
+    }
+
+    /* PROFILE STATS */
+    .profile-stats{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));
+      gap:12px;
+      margin-bottom:20px;
+    }
+    
+    .stat-card{
+      background:var(--bg-light);
+      border:1px solid var(--border);
+      border-radius:8px;
+      padding:16px;
+      text-align:center;
+    }
+    
+    .stat-value{
+      font-size:24px;
+      font-weight:700;
+      color:var(--primary);
+      margin-bottom:4px;
+    }
+    
+    .stat-label{
+      font-size:12px;
+      color:var(--text-muted);
+      text-transform:uppercase;
+      letter-spacing:0.5px;
+    }
+
+    /* ACTION BUTTONS FOR SPOTS */
+    .spot-actions{
+      display:flex;
+      gap:8px;
+      margin-top:12px;
+      flex-wrap:wrap;
+    }
+    
+    .spot-actions .btn{
+      flex:1;
+      min-width:120px;
+      padding:8px 12px;
+      font-size:12px;
+    }
+
     /* RESPONSIVE */
     @media (max-width:768px){
       .header-content{
@@ -795,7 +916,6 @@
       .logo{
         width:36px;
         height:36px;
-        font-size:16px;
       }
       
       .brand h1{
@@ -804,6 +924,10 @@
       
       .brand p{
         font-size:10px;
+      }
+      
+      .brand .gang-name{
+        font-size:9px;
       }
       
       nav{
@@ -890,13 +1014,24 @@
       .spot-meta{
         font-size:11px;
       }
+      
+      .map-container{
+        min-height:300px;
+      }
+      
+      .profile-stats{
+        grid-template-columns:repeat(2, 1fr);
+      }
+      
+      .spot-actions .btn{
+        min-width:calc(50% - 4px);
+      }
     }
     
     @media (max-width:480px){
       .logo{
         width:32px;
         height:32px;
-        font-size:14px;
       }
       
       .brand h1{
@@ -920,6 +1055,14 @@
       .spot-exchange{
         padding:8px;
         font-size:12px;
+      }
+      
+      .profile-stats{
+        grid-template-columns:1fr;
+      }
+      
+      .spot-actions .btn{
+        min-width:100%;
       }
     }
 
@@ -948,10 +1091,13 @@
   <header>
     <div class="header-content">
       <div class="logo-area">
-        <div class="logo">SS</div>
+        <div class="logo">
+          <img src="https://yt3.ggpht.com/N4WaWTevD_K5buOS7rOYGHmwowNgBRTA0r6fF5vnylvLEUefL8G4ofnlh9LZ8th2TOrnt0gd-A=s176-c-k-c0x00ffffff-no-rj-mo" alt="2Lost2Find">
+        </div>
         <div class="brand">
           <h1>SpotSwap</h1>
           <p>Scambia spot</p>
+          <div class="gang-name">2Lost2Find Gang</div>
         </div>
       </div>
 
@@ -1026,6 +1172,8 @@
       <div class="tabs">
         <button class="tab active" data-tab="received">Ricevute <span id="received-count">(5)</span></button>
         <button class="tab" data-tab="sent">Inviate <span id="sent-count">(3)</span></button>
+        <button class="tab" data-tab="pending">In Attesa <span id="pending-count">(4)</span></button>
+        <button class="tab" data-tab="closed">Chiuse <span id="closed-count">(2)</span></button>
       </div>
 
       <div id="tab-received">
@@ -1035,6 +1183,14 @@
       <div id="tab-sent" class="hidden">
         <div id="sent-requests"></div>
       </div>
+
+      <div id="tab-pending" class="hidden">
+        <div id="pending-requests"></div>
+      </div>
+
+      <div id="tab-closed" class="hidden">
+        <div id="closed-requests"></div>
+      </div>
     </section>
 
     <!-- MY SPOTS VIEW -->
@@ -1042,12 +1198,92 @@
       <div class="section-header flex-between">
         <div>
           <h2>I miei spot</h2>
-          <p class="text-muted">Gestisci i tuoi spot pubblicati</p>
+          <p class="text-muted">Gestisci i tuoi spot pubblicati e ottenuti</p>
         </div>
         <button class="btn btn-primary" onclick="showView('new')">+ Nuovo spot</button>
       </div>
 
-      <div class="grid" id="my-spots-grid"></div>
+      <div class="tabs">
+        <button class="tab active" data-tab="published">Pubblicati <span id="published-count">(4)</span></button>
+        <button class="tab" data-tab="acquired">Ottenuti <span id="acquired-count">(2)</span></button>
+        <button class="tab" data-tab="profile">Profilo</button>
+        <button class="tab" data-tab="map">Mappa</button>
+      </div>
+
+      <div id="tab-published">
+        <div class="grid" id="published-spots-grid"></div>
+      </div>
+
+      <div id="tab-acquired" class="hidden">
+        <div class="grid" id="acquired-spots-grid"></div>
+      </div>
+
+      <div id="tab-profile" class="hidden">
+        <div class="card">
+          <div class="profile-stats">
+            <div class="stat-card">
+              <div class="stat-value" id="total-spots">6</div>
+              <div class="stat-label">Spot totali</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="completed-trades">3</div>
+              <div class="stat-label">Scambi completati</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="pending-trades">2</div>
+              <div class="stat-label">In attesa</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="success-rate">75%</div>
+              <div class="stat-label">Successo scambi</div>
+            </div>
+          </div>
+
+          <h3 style="margin-bottom:16px">Impostazioni</h3>
+          
+          <div class="form-group">
+            <label class="form-label">Nome utente</label>
+            <input type="text" class="form-input" id="profile-username" value="UrbexMaster">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Notifiche email</label>
+            <select class="form-select" id="profile-notifications">
+              <option value="all">Tutte le notifiche</option>
+              <option value="important">Solo importanti</option>
+              <option value="none">Nessuna</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="profile-private" checked>
+              <span>Profilo privato (nascondi statistiche ad altri utenti)</span>
+            </label>
+          </div>
+
+          <div class="flex gap-2 mt-2">
+            <button class="btn btn-ghost">Annulla</button>
+            <button class="btn btn-primary" onclick="saveProfileSettings()">Salva modifiche</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-map" class="hidden">
+        <div class="card">
+          <div class="map-container" id="map-view">
+            <div class="map-overlay">
+              <h3 style="margin-bottom:12px">Mappa dei tuoi spot</h3>
+              <p class="text-muted" style="margin-bottom:16px">Visualizza tutti i tuoi spot su mappa satellitare</p>
+              <div class="flex gap-2" style="flex-wrap:wrap">
+                <button class="btn btn-ghost" onclick="refreshMap()">Aggiorna mappa</button>
+                <button class="btn btn-primary" onclick="zoomToItaly()">Zoom Italia</button>
+              </div>
+            </div>
+            <div id="map-markers"></div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- NEW SPOT VIEW -->
@@ -1147,7 +1383,7 @@
       </div>
 
       <div class="alert alert-info">
-        Scegli quale spot accettare in cambio del tuo
+        Scegli quale spot accettare in cambio del tuo. Puoi selezionarne solo uno.
       </div>
 
       <div id="choose-spots-list"></div>
@@ -1178,20 +1414,25 @@
 
   <script>
     // ========== CONSTANTS ==========
-    const STORAGE_KEY = 'spotswap_v4';
+    const STORAGE_KEY = 'spotswap_v5';
     const VERIFICATION_TIME = 10000; // 10 seconds
 
     // ========== STATE ==========
     let state = {
       user: {
         username: 'UrbexMaster',
-        id: 'user_' + Date.now()
+        id: 'user_' + Date.now(),
+        settings: {
+          notifications: 'all',
+          privateProfile: true
+        }
       },
       spots: [],
       tradeRequests: [],
       currentOfferId: null,
       currentRequestId: null,
-      selectedOfferSpots: []
+      selectedOfferSpots: [],
+      mapMarkers: []
     };
 
     // ========== INIT ==========
@@ -1259,15 +1500,37 @@
       document.getElementById('btn-send-offer').addEventListener('click', sendOffer);
       document.getElementById('btn-accept-trade').addEventListener('click', acceptTrade);
 
-      // Tabs
-      document.querySelectorAll('.tab').forEach(tab => {
+      // Tabs per richieste
+      document.querySelectorAll('#view-requests .tab').forEach(tab => {
         tab.addEventListener('click', () => {
           const tabName = tab.dataset.tab;
-          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('#view-requests .tab').forEach(t => t.classList.remove('active'));
           tab.classList.add('active');
           
           document.getElementById('tab-received').classList.toggle('hidden', tabName !== 'received');
           document.getElementById('tab-sent').classList.toggle('hidden', tabName !== 'sent');
+          document.getElementById('tab-pending').classList.toggle('hidden', tabName !== 'pending');
+          document.getElementById('tab-closed').classList.toggle('hidden', tabName !== 'closed');
+        });
+      });
+
+      // Tabs per i miei spot
+      document.querySelectorAll('#view-my-spots .tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          const tabName = tab.dataset.tab;
+          document.querySelectorAll('#view-my-spots .tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          
+          document.getElementById('tab-published').classList.toggle('hidden', tabName !== 'published');
+          document.getElementById('tab-acquired').classList.toggle('hidden', tabName !== 'acquired');
+          document.getElementById('tab-profile').classList.toggle('hidden', tabName !== 'profile');
+          document.getElementById('tab-map').classList.toggle('hidden', tabName !== 'map');
+          
+          if (tabName === 'map') {
+            renderMap();
+          } else if (tabName === 'profile') {
+            updateProfileStats();
+          }
         });
       });
     }
@@ -1348,8 +1611,24 @@
 
     // ========== MY SPOTS ==========
     function renderMySpots() {
-      const mySpots = state.spots.filter(s => s.author === state.user.username);
-      const grid = document.getElementById('my-spots-grid');
+      renderPublishedSpots();
+      renderAcquiredSpots();
+      updateProfileStats();
+      
+      // Aggiorna contatori
+      const published = state.spots.filter(s => s.author === state.user.username);
+      const acquired = state.spots.filter(s => 
+        s.acquiredFrom === state.user.username || 
+        (s.originalAuthor === state.user.username && s.acquired)
+      );
+      
+      document.getElementById('published-count').textContent = `(${published.length})`;
+      document.getElementById('acquired-count').textContent = `(${acquired.length})`;
+    }
+
+    function renderPublishedSpots() {
+      const mySpots = state.spots.filter(s => s.author === state.user.username && !s.acquired);
+      const grid = document.getElementById('published-spots-grid');
 
       if (mySpots.length === 0) {
         grid.innerHTML = `
@@ -1364,7 +1643,7 @@
       }
 
       grid.innerHTML = mySpots.map(spot => `
-        <div class="spot-card" onclick="viewSpotDetail('${spot.id}')">
+        <div class="spot-card">
           <div class="spot-header">
             <div style="flex:1">
               <div class="spot-title">${escapeHtml(spot.give)}</div>
@@ -1387,8 +1666,166 @@
           <div class="tags">
             <span class="badge badge-info">${spot.category}</span>
           </div>
+          
+          <div class="spot-actions">
+            <button class="btn btn-ghost" onclick="viewSpotDetail('${spot.id}')">Dettagli</button>
+            ${spot.coordinates && spot.coordinates.includes(',') ? `
+              <button class="btn btn-primary" onclick="openInGoogleMaps('${spot.coordinates}', '${escapeHtml(spot.give)}')">
+                <span style="display:flex;align-items:center;gap:4px">🗺️ Mappa</span>
+              </button>
+            ` : ''}
+            ${spot.status === 'active' ? `<button class="btn btn-danger" onclick="deleteSpot('${spot.id}')">Elimina</button>` : ''}
+          </div>
         </div>
       `).join('');
+    }
+
+    function renderAcquiredSpots() {
+      // Spot ottenuti da scambi
+      const acquiredSpots = state.spots.filter(s => 
+        s.acquired === true && s.currentOwner === state.user.username
+      );
+      
+      const grid = document.getElementById('acquired-spots-grid');
+
+      if (acquiredSpots.length === 0) {
+        grid.innerHTML = `
+          <div class="card empty-state" style="grid-column:1/-1">
+            <div class="empty-state-icon">🏆</div>
+            <div>Nessuno spot ottenuto</div>
+            <p class="text-muted">Completa alcuni scambi per ottenere nuovi spot</p>
+            <button class="btn btn-primary mt-2" onclick="showView('market')">Vai al mercato</button>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = acquiredSpots.map(spot => `
+        <div class="spot-card">
+          <div class="spot-header">
+            <div style="flex:1">
+              <div class="spot-title">${escapeHtml(spot.give)}</div>
+              <div class="spot-meta">📍 ${escapeHtml(spot.region)}</div>
+            </div>
+            <span class="badge badge-success">Ottenuto</span>
+          </div>
+
+          <div class="spot-exchange">
+            <div class="spot-exchange-row">
+              <strong>Ex proprietario:</strong> ${escapeHtml(spot.originalAuthor || 'Sconosciuto')}
+            </div>
+            <div class="spot-exchange-row">
+              <strong>Ottenuto il:</strong> ${new Date(spot.acquiredDate || Date.now()).toLocaleDateString('it-IT')}
+            </div>
+          </div>
+
+          <div class="tags">
+            <span class="badge badge-info">${spot.category}</span>
+            <span class="badge badge-warning">Scambio</span>
+          </div>
+          
+          <div class="spot-actions">
+            <button class="btn btn-ghost" onclick="viewSpotDetail('${spot.id}')">Dettagli</button>
+            ${spot.coordinates ? `
+              <button class="btn btn-primary" onclick="openInGoogleMaps('${spot.coordinates}', '${escapeHtml(spot.give)}')">
+                <span style="display:flex;align-items:center;gap:4px">🗺️ Mappa</span>
+              </button>
+            ` : ''}
+            <button class="btn btn-success" onclick="offerAcquiredSpot('${spot.id}')">Offri in scambio</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function updateProfileStats() {
+      const totalSpots = state.spots.filter(s => 
+        s.author === state.user.username || 
+        (s.acquired && s.currentOwner === state.user.username)
+      ).length;
+      
+      const completedTrades = state.tradeRequests.filter(r => 
+        r.status === 'accepted' && 
+        (r.fromUser === state.user.username || 
+         (state.spots.find(s => s.id === r.spotId)?.author === state.user.username))
+      ).length;
+      
+      const pendingTrades = state.tradeRequests.filter(r => 
+        (r.status === 'pending' || r.status === 'verifying') && 
+        (r.fromUser === state.user.username || 
+         (state.spots.find(s => s.id === r.spotId)?.author === state.user.username))
+      ).length;
+      
+      const successRate = totalSpots > 0 ? Math.round((completedTrades / totalSpots) * 100) : 0;
+      
+      document.getElementById('total-spots').textContent = totalSpots;
+      document.getElementById('completed-trades').textContent = completedTrades;
+      document.getElementById('pending-trades').textContent = pendingTrades;
+      document.getElementById('success-rate').textContent = `${successRate}%`;
+      
+      // Carica impostazioni
+      document.getElementById('profile-username').value = state.user.username;
+      document.getElementById('profile-notifications').value = state.user.settings.notifications;
+      document.getElementById('profile-private').checked = state.user.settings.privateProfile;
+    }
+
+    function saveProfileSettings() {
+      state.user.username = document.getElementById('profile-username').value;
+      state.user.settings.notifications = document.getElementById('profile-notifications').value;
+      state.user.settings.privateProfile = document.getElementById('profile-private').checked;
+      
+      saveState();
+      showToast('Impostazioni salvate!', 'success');
+    }
+
+    function renderMap() {
+      const mapContainer = document.getElementById('map-markers');
+      mapContainer.innerHTML = '';
+      
+      // Recupera tutti gli spot dell'utente
+      const userSpots = state.spots.filter(s => 
+        s.author === state.user.username || 
+        (s.acquired && s.currentOwner === state.user.username)
+      );
+      
+      // Posizioni predefinite per la demo
+      const demoPositions = [
+        { lat: 45.4642, lng: 9.1900, name: 'Milano' },
+        { lat: 45.6983, lng: 9.6773, name: 'Bergamo' },
+        { lat: 45.0703, lng: 7.6869, name: 'Torino' },
+        { lat: 46.4983, lng: 11.3548, name: 'Trentino' },
+        { lat: 45.7376, lng: 7.3207, name: 'Valle d\'Aosta' },
+        { lat: 43.7696, lng: 11.2558, name: 'Firenze' }
+      ];
+      
+      userSpots.forEach((spot, index) => {
+        if (index < demoPositions.length) {
+          const pos = demoPositions[index];
+          const marker = document.createElement('div');
+          marker.className = 'map-spot-marker';
+          marker.style.left = `${(pos.lng + 13) * 20}px`; // Posizione approssimativa
+          marker.style.top = `${(46 - pos.lat) * 20}px`;
+          marker.innerHTML = `
+            <div class="map-spot-tooltip">
+              <strong>${escapeHtml(spot.give)}</strong>
+              <div style="font-size:11px;margin-top:4px">${escapeHtml(spot.region)}</div>
+              <button class="btn btn-ghost" style="margin-top:6px;padding:4px 8px;font-size:11px" onclick="viewSpotDetail('${spot.id}')">
+                Dettagli
+              </button>
+            </div>
+          `;
+          mapContainer.appendChild(marker);
+        }
+      });
+    }
+
+    function refreshMap() {
+      renderMap();
+      showToast('Mappa aggiornata');
+    }
+
+    function zoomToItaly() {
+      // Per la demo, mostriamo un messaggio
+      showToast('Zoom sulla posizione Italia');
     }
 
     // ========== REQUESTS ==========
@@ -1399,9 +1836,23 @@
       });
 
       const sent = state.tradeRequests.filter(r => r.fromUser === state.user.username);
+      
+      const pending = state.tradeRequests.filter(r => 
+        (r.status === 'pending' || r.status === 'verifying') && 
+        (r.fromUser === state.user.username || 
+         (state.spots.find(s => s.id === r.spotId)?.author === state.user.username))
+      );
+      
+      const closed = state.tradeRequests.filter(r => 
+        (r.status === 'accepted' || r.status === 'rejected') && 
+        (r.fromUser === state.user.username || 
+         (state.spots.find(s => s.id === r.spotId)?.author === state.user.username))
+      );
 
       document.getElementById('received-count').textContent = `(${received.length})`;
       document.getElementById('sent-count').textContent = `(${sent.length})`;
+      document.getElementById('pending-count').textContent = `(${pending.length})`;
+      document.getElementById('closed-count').textContent = `(${closed.length})`;
 
       // Received requests
       const receivedContainer = document.getElementById('received-requests');
@@ -1427,6 +1878,32 @@
         `;
       } else {
         sentContainer.innerHTML = sent.map(req => renderTradeRequest(req, 'sent')).join('');
+      }
+      
+      // Pending requests
+      const pendingContainer = document.getElementById('pending-requests');
+      if (pending.length === 0) {
+        pendingContainer.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">⏳</div>
+            <div>Nessuna richiesta in attesa</div>
+          </div>
+        `;
+      } else {
+        pendingContainer.innerHTML = pending.map(req => renderTradeRequest(req, 'pending')).join('');
+      }
+      
+      // Closed requests
+      const closedContainer = document.getElementById('closed-requests');
+      if (closed.length === 0) {
+        closedContainer.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📁</div>
+            <div>Nessuna richiesta chiusa</div>
+          </div>
+        `;
+      } else {
+        closedContainer.innerHTML = closed.map(req => renderTradeRequest(req, 'closed')).join('');
       }
 
       updateRequestsCount();
@@ -1460,22 +1937,25 @@
           break;
       }
 
+      const isReceived = type === 'received';
+      const isPendingTab = type === 'pending';
+      
       return `
         <div class="trade-request">
           <div class="flex-between mb-2">
             <div>
-              <strong>${type === 'received' ? 'Da' : 'Per'}: ${escapeHtml(type === 'received' ? req.fromUser : spot.author)}</strong>
+              <strong>${isReceived || isPendingTab ? 'Da' : 'Per'}: ${escapeHtml(isReceived || isPendingTab ? req.fromUser : spot.author)}</strong>
               <div class="text-muted" style="font-size:12px;margin-top:2px">${getTimeAgo(req.createdAt)}</div>
             </div>
             ${statusBadge}
           </div>
 
           <div class="mb-2">
-            <strong>Spot richiesto:</strong> ${escapeHtml(spot.give)}
+            <strong>Spot ${isReceived ? 'richiesto' : 'offerto'}:</strong> ${escapeHtml(spot.give)}
           </div>
 
           <div class="mb-2">
-            <strong>Spot offerti in cambio:</strong>
+            <strong>Spot ${isReceived ? 'offerti' : 'richiesti'} in cambio:</strong>
             ${offeredSpots.map(s => `
               <div style="padding:8px;background:var(--bg);border-radius:6px;margin-top:6px;border:1px solid var(--border);font-size:12px">
                 ${escapeHtml(s.give)} - ${escapeHtml(s.region)}
@@ -1500,8 +1980,14 @@
       
       if (req.fromUser === state.user.username) {
         html += `<div style="margin-top:6px">📍 ${escapeHtml(spot.give)}: ${escapeHtml(spot.coordinates || 'Non disponibili')}</div>`;
+        html += `<button class="btn btn-primary" style="margin-top:8px;padding:6px 12px;font-size:12px" onclick="openInGoogleMaps('${spot.coordinates}', '${escapeHtml(spot.give)}')">
+          Apri in Google Maps
+        </button>`;
       } else {
         html += `<div style="margin-top:6px">📍 ${escapeHtml(selectedSpot.give)}: ${escapeHtml(selectedSpot.coordinates || 'Non disponibili')}</div>`;
+        html += `<button class="btn btn-primary" style="margin-top:8px;padding:6px 12px;font-size:12px" onclick="openInGoogleMaps('${selectedSpot.coordinates}', '${escapeHtml(selectedSpot.give)}')">
+          Apri in Google Maps
+        </button>`;
       }
       
       html += '</div>';
@@ -1512,7 +1998,8 @@
     function openOfferModal(spotId) {
       const myActiveSpots = state.spots.filter(s => 
         s.author === state.user.username && 
-        s.status === 'active'
+        s.status === 'active' &&
+        !s.acquired
       );
 
       if (myActiveSpots.length === 0) {
@@ -1528,7 +2015,7 @@
       list.innerHTML = myActiveSpots.map(spot => `
         <label class="spot-selector">
           <input type="checkbox" value="${spot.id}" onchange="toggleOfferSpot('${spot.id}')">
-          <div>
+          <div class="spot-selector-content">
             <strong>${escapeHtml(spot.give)}</strong>
             <div class="text-muted" style="font-size:12px;margin-top:2px">📍 ${escapeHtml(spot.region)}</div>
           </div>
@@ -1539,16 +2026,24 @@
     }
 
     function toggleOfferSpot(spotId) {
-      const index = state.selectedOfferSpots.indexOf(spotId);
-      if (index > -1) {
-        state.selectedOfferSpots.splice(index, 1);
-      } else {
+      const checkbox = document.querySelector(`input[value="${spotId}"]`);
+      const selector = checkbox.closest('.spot-selector');
+      
+      if (checkbox.checked) {
         if (state.selectedOfferSpots.length >= 3) {
           showToast('Puoi selezionare massimo 3 spot', 'error');
-          document.querySelector(`input[value="${spotId}"]`).checked = false;
+          checkbox.checked = false;
+          selector.classList.remove('selected');
           return;
         }
         state.selectedOfferSpots.push(spotId);
+        selector.classList.add('selected');
+      } else {
+        const index = state.selectedOfferSpots.indexOf(spotId);
+        if (index > -1) {
+          state.selectedOfferSpots.splice(index, 1);
+        }
+        selector.classList.remove('selected');
       }
     }
 
@@ -1586,11 +2081,11 @@
       const list = document.getElementById('choose-spots-list');
       list.innerHTML = offeredSpots.map(spot => `
         <label class="spot-selector">
-          <input type="radio" name="chosen-spot" value="${spot.id}">
-          <div>
+          <input type="radio" name="chosen-spot" value="${spot.id}" onchange="selectSpotForTrade('${spot.id}')">
+          <div class="spot-selector-content">
             <strong>${escapeHtml(spot.give)}</strong>
             <div class="text-muted" style="font-size:12px;margin-top:2px">📍 ${escapeHtml(spot.region)}</div>
-            <div style="margin-top:6px;font-size:12px">${escapeHtml(spot.description)}</div>
+            <div style="margin-top:6px;font-size:12px">${escapeHtml(spot.description.substring(0, 100))}${spot.description.length > 100 ? '...' : ''}</div>
             <div class="tags" style="margin-top:6px">
               <span class="badge badge-info">${spot.category}</span>
             </div>
@@ -1599,6 +2094,19 @@
       `).join('');
 
       openModal('modal-choose');
+    }
+
+    function selectSpotForTrade(spotId) {
+      // Rimuovi la selezione precedente
+      document.querySelectorAll('.spot-selector').forEach(el => {
+        el.classList.remove('selected');
+      });
+      
+      // Aggiungi la selezione corrente
+      const selectedSelector = document.querySelector(`input[value="${spotId}"]`).closest('.spot-selector');
+      if (selectedSelector) {
+        selectedSelector.classList.add('selected');
+      }
     }
 
     function acceptTrade() {
@@ -1625,6 +2133,21 @@
       renderRequests();
     }
 
+    function offerAcquiredSpot(spotId) {
+      const spot = state.spots.find(s => s.id === spotId);
+      if (!spot) return;
+      
+      // Cambia lo stato per renderlo disponibile
+      spot.status = 'active';
+      spot.author = state.user.username;
+      spot.acquired = false;
+      spot.want = 'Varie opzioni';
+      
+      saveState();
+      showToast('Spot ora disponibile per lo scambio!', 'success');
+      renderMySpots();
+    }
+
     // ========== VERIFICATION CHECKER ==========
     function startVerificationChecker() {
       setInterval(() => {
@@ -1640,8 +2163,24 @@
               // Mark spots as completed
               const spot1 = state.spots.find(s => s.id === req.spotId);
               const spot2 = state.spots.find(s => s.id === req.selectedSpotId);
-              if (spot1) spot1.status = 'completed';
-              if (spot2) spot2.status = 'completed';
+              
+              if (spot1) {
+                spot1.status = 'completed';
+                spot1.acquired = true;
+                spot1.originalAuthor = spot1.author;
+                spot1.currentOwner = req.fromUser;
+                spot1.acquiredDate = Date.now();
+                spot1.author = req.fromUser;
+              }
+              
+              if (spot2) {
+                spot2.status = 'completed';
+                spot2.acquired = true;
+                spot2.originalAuthor = spot2.author;
+                spot2.currentOwner = spot1?.originalAuthor || state.user.username;
+                spot2.acquiredDate = Date.now();
+                spot2.author = spot1?.originalAuthor || state.user.username;
+              }
 
               if (document.getElementById('view-requests').classList.contains('hidden') === false) {
                 showToast('Scambio verificato e completato! 🎉', 'success');
@@ -1654,6 +2193,9 @@
           saveState();
           if (document.getElementById('view-requests').classList.contains('hidden') === false) {
             renderRequests();
+          }
+          if (document.getElementById('view-my-spots').classList.contains('hidden') === false) {
+            renderMySpots();
           }
         }
       }, 1000);
@@ -1691,6 +2233,7 @@
         description: description || 'Nessuna descrizione',
         author: state.user.username,
         status: 'active',
+        acquired: false,
         createdAt: Date.now()
       };
 
@@ -1709,6 +2252,18 @@
       showView('my-spots');
     }
 
+    function deleteSpot(spotId) {
+      if (!confirm('Sei sicuro di voler eliminare questo spot?')) return;
+      
+      const index = state.spots.findIndex(s => s.id === spotId);
+      if (index > -1) {
+        state.spots.splice(index, 1);
+        saveState();
+        showToast('Spot eliminato', 'success');
+        renderMySpots();
+      }
+    }
+
     // ========== SPOT DETAIL ==========
     function viewSpotDetail(spotId) {
       const spot = state.spots.find(s => s.id === spotId);
@@ -1723,10 +2278,12 @@
           <span class="badge badge-${spot.status === 'active' ? 'success' : spot.status === 'in_trade' ? 'warning' : 'danger'}">
             ${spot.status === 'active' ? 'Disponibile' : spot.status === 'in_trade' ? 'In scambio' : 'Completato'}
           </span>
+          ${spot.acquired ? '<span class="badge badge-warning">Ottenuto</span>' : ''}
         </div>
 
         <div class="mb-2">
           <strong>Autore:</strong> ${escapeHtml(spot.author)}
+          ${spot.originalAuthor ? `<div style="font-size:12px;color:var(--text-muted);margin-top:2px">Originale: ${escapeHtml(spot.originalAuthor)}</div>` : ''}
         </div>
 
         <div class="mb-2">
@@ -1735,15 +2292,18 @@
 
         <div class="mb-2">
           <strong>Pubblicato:</strong> ${getTimeAgo(spot.createdAt)}
+          ${spot.acquiredDate ? `<div style="font-size:12px;color:var(--text-muted);margin-top:2px">Ottenuto: ${new Date(spot.acquiredDate).toLocaleDateString('it-IT')}</div>` : ''}
         </div>
 
         <div class="spot-exchange mb-2">
           <div class="spot-exchange-row">
-            <strong>Offre:</strong> ${escapeHtml(spot.give)}
+            <strong>${spot.acquired ? 'Spot' : 'Offre'}:</strong> ${escapeHtml(spot.give)}
           </div>
-          <div class="spot-exchange-row">
-            <strong>Cerca:</strong> ${escapeHtml(spot.want)}
-          </div>
+          ${!spot.acquired ? `
+            <div class="spot-exchange-row">
+              <strong>Cerca:</strong> ${escapeHtml(spot.want)}
+            </div>
+          ` : ''}
         </div>
 
         <div class="mb-2">
@@ -1751,10 +2311,13 @@
           <p style="margin-top:6px;font-size:13px">${escapeHtml(spot.description)}</p>
         </div>
 
-        ${spot.status === 'completed' ? `
+        ${spot.coordinates && (spot.status === 'completed' || spot.acquired) ? `
           <div class="coordinates-box">
             <strong>📍 Coordinate GPS</strong>
             <div style="margin-top:6px">${escapeHtml(spot.coordinates)}</div>
+            <button class="btn btn-primary" style="margin-top:8px;padding:6px 12px;font-size:12px" onclick="openInGoogleMaps('${spot.coordinates}', '${escapeHtml(spot.give)}')">
+              Apri in Google Maps
+            </button>
           </div>
         ` : ''}
       `;
@@ -1766,11 +2329,32 @@
             Proponi scambio
           </button>
         `;
+      } else if (spot.author === state.user.username && spot.status === 'active') {
+        actions.innerHTML = `
+          <div class="flex gap-2">
+            <button class="btn btn-ghost" onclick="closeModal('modal-detail')">Chiudi</button>
+            <button class="btn btn-danger" onclick="deleteSpot('${spot.id}')">Elimina spot</button>
+          </div>
+        `;
       } else {
         actions.innerHTML = '';
       }
 
       openModal('modal-detail');
+    }
+
+    // ========== GOOGLE MAPS ==========
+    function openInGoogleMaps(coordinates, title) {
+      if (!coordinates || !coordinates.includes(',')) {
+        showToast('Coordinate non valide', 'error');
+        return;
+      }
+      
+      const cleanTitle = encodeURIComponent(title);
+      const cleanCoords = coordinates.replace(/\s/g, '');
+      const url = `https://www.google.com/maps?q=${cleanCoords}&z=15&t=s&hl=it&layer=s`;
+      
+      window.open(url, '_blank');
     }
 
     // ========== MODAL ==========
@@ -1818,6 +2402,7 @@
           description: 'Struttura molto fotogenica con macchinari originali.',
           author: state.user.username,
           status: 'active',
+          acquired: false,
           createdAt: Date.now() - 86400000
         },
         {
@@ -1830,6 +2415,7 @@
           description: 'Bellissima villa con affreschi. Architettura liberty ben conservata.',
           author: state.user.username,
           status: 'in_trade',
+          acquired: false,
           createdAt: Date.now() - 172800000
         },
         {
@@ -1842,6 +2428,7 @@
           description: 'Struttura militare degli anni 30 con sotterranei.',
           author: state.user.username,
           status: 'completed',
+          acquired: false,
           createdAt: Date.now() - 345600000
         },
         {
@@ -1854,6 +2441,7 @@
           description: 'Impianto anni 50 con turbine ancora presenti.',
           author: state.user.username,
           status: 'active',
+          acquired: false,
           createdAt: Date.now() - 777600000
         }
       ];
@@ -1870,6 +2458,7 @@
           description: 'Architettura razionalista imponente. Ampio parco circostante.',
           author: 'SpotSeeker',
           status: 'active',
+          acquired: false,
           createdAt: Date.now() - 259200000
         },
         {
@@ -1882,6 +2471,7 @@
           description: 'Hotel con vista mare, strutture ancora intatte.',
           author: 'CoastalHunter',
           status: 'active',
+          acquired: false,
           createdAt: Date.now() - 432000000
         },
         {
@@ -1894,6 +2484,7 @@
           description: 'Grande complesso industriale con macchinari originali.',
           author: 'FactoryFinder',
           status: 'active',
+          acquired: false,
           createdAt: Date.now() - 518400000
         },
         {
@@ -1906,6 +2497,7 @@
           description: 'Castello del 1400 con torri e sotterranei.',
           author: 'HistoryHunter',
           status: 'active',
+          acquired: false,
           createdAt: Date.now() - 604800000
         },
         {
@@ -1918,107 +2510,48 @@
           description: 'Struttura fascista imponente con lunghi corridoi.',
           author: 'ArchitectureFan',
           status: 'active',
+          acquired: false,
           createdAt: Date.now() - 691200000
-        },
+        }
+      ];
+
+      // Spot ottenuti dall'utente
+      const acquiredSpots = [
         {
           id: generateId(),
           give: 'Villa sul lago abbandonata',
-          want: 'Struttura militare costiera',
+          want: 'Varie opzioni',
           region: 'Lago di Como',
           coordinates: '45.8170, 9.0856',
           category: 'villa',
           description: 'Villa Liberty direttamente sul lago. Vista mozzafiato.',
-          author: 'LakeExplorer',
-          status: 'active',
-          createdAt: Date.now() - 864000000
-        },
-        {
-          id: generateId(),
-          give: 'Ex miniera di carbone',
-          want: 'Sanatorio o ospedale abbandonato',
-          region: 'Sardegna - Carbonia',
-          coordinates: '39.1642, 8.5219',
-          category: 'industriale',
-          description: 'Miniera sotterranea con gallerie estese.',
-          author: 'UndergroundPro',
-          status: 'active',
+          author: state.user.username,
+          originalAuthor: 'LakeExplorer',
+          status: 'completed',
+          acquired: true,
+          currentOwner: state.user.username,
+          acquiredDate: Date.now() - 864000000,
           createdAt: Date.now() - 950400000
         },
         {
           id: generateId(),
-          give: 'Hotel di lusso anni 60 mai aperto',
-          want: 'Fabbrica tessile o manifatturiera',
-          region: 'Riviera Romagnola',
-          coordinates: '44.2244, 12.4443',
-          category: 'hotel',
-          description: 'Struttura completata ma mai inaugurata. Architettura unica.',
-          author: 'UnfinishedBeauty',
-          status: 'active',
-          createdAt: Date.now() - 1036800000
-        },
-        {
-          id: generateId(),
-          give: 'Ex colonia marina',
-          want: 'Castello o fortezza',
-          region: 'Marche - Ancona',
-          coordinates: '43.6158, 13.5189',
-          category: 'altro',
-          description: 'Architettura razionalista ben conservata. Sul mare.',
-          author: 'FascistArchitecture',
-          status: 'active',
+          give: 'Ex miniera di carbone',
+          want: 'Varie opzioni',
+          region: 'Sardegna - Carbonia',
+          coordinates: '39.1642, 8.5219',
+          category: 'industriale',
+          description: 'Miniera sotterranea con gallerie estese.',
+          author: state.user.username,
+          originalAuthor: 'UndergroundPro',
+          status: 'completed',
+          acquired: true,
+          currentOwner: state.user.username,
+          acquiredDate: Date.now() - 1036800000,
           createdAt: Date.now() - 1123200000
-        },
-        {
-          id: generateId(),
-          give: 'Ex stazione ferroviaria',
-          want: 'Villa con cappella privata',
-          region: 'Sicilia - Catania',
-          coordinates: '37.5079, 15.0830',
-          category: 'altro',
-          description: 'Stazione in stile liberty con binari ancora presenti.',
-          author: 'RailwayHunter',
-          status: 'active',
-          createdAt: Date.now() - 1209600000
-        },
-        {
-          id: generateId(),
-          give: 'Cava di marmo abbandonata',
-          want: 'Struttura sanitaria vintage',
-          region: 'Toscana - Carrara',
-          coordinates: '44.0795, 10.0977',
-          category: 'industriale',
-          description: 'Cava a cielo aperto con gallerie. Panorama incredibile.',
-          author: 'MarbleHunter',
-          status: 'active',
-          createdAt: Date.now() - 1296000000
-        },
-        {
-          id: generateId(),
-          give: 'Ex monastero del 1700',
-          want: 'Struttura industriale in mattoni',
-          region: 'Abruzzo - L\'Aquila',
-          coordinates: '42.3505, 13.3995',
-          category: 'altro',
-          description: 'Monastero con chiostro intatto e cripta.',
-          author: 'MonasteryExplorer',
-          status: 'active',
-          createdAt: Date.now() - 1382400000
-        },
-        {
-          id: generateId(),
-          give: 'Centrale telefonica abbandonata',
-          want: 'Villa con piscina abbandonata',
-          region: 'Lazio - Roma',
-          coordinates: '41.9028, 12.4964',
-          category: 'industriale',
-          description: 'Struttura anni 70 con apparecchiature vintage.',
-          author: 'TelecomExplorer',
-          status: 'active',
-          createdAt: Date.now() - 1468800000
         }
       ];
 
-      state.spots.push(...mySpots, ...marketSpots);
+      state.spots.push(...mySpots, ...marketSpots, ...acquiredSpots);
 
       // Richieste ricevute (da altri utenti per i nostri spot)
       const receivedRequests = [
@@ -2034,9 +2567,9 @@
           id: generateId(),
           spotId: mySpots[3].id,
           fromUser: 'LakeExplorer',
-          offeredSpots: [marketSpots[5].id],
+          offeredSpots: [marketSpots[4].id],
           status: 'verifying',
-          selectedSpotId: marketSpots[5].id,
+          selectedSpotId: marketSpots[4].id,
           verificationStartedAt: Date.now() - 5000,
           createdAt: Date.now() - 7200000
         },
@@ -2062,7 +2595,7 @@
           id: generateId(),
           spotId: mySpots[3].id,
           fromUser: 'FactoryFinder',
-          offeredSpots: [marketSpots[2].id, marketSpots[6].id],
+          offeredSpots: [marketSpots[2].id, marketSpots[3].id],
           status: 'pending',
           createdAt: Date.now() - 1800000
         }
@@ -2090,7 +2623,7 @@
         },
         {
           id: generateId(),
-          spotId: marketSpots[5].id,
+          spotId: marketSpots[4].id,
           fromUser: state.user.username,
           offeredSpots: [mySpots[0].id],
           status: 'verifying',
