@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>SpotSwap — Scambia spot in sicurezza</title>
+  <title>SpotSwap — Scambia spot</title>
   <style>
     :root{
       --bg:#0a0e1a;
@@ -777,7 +777,7 @@
         <div class="logo">SS</div>
         <div class="brand">
           <h1>SpotSwap</h1>
-          <p>Scambia spot in sicurezza</p>
+          <p>Scambia spot</p>
         </div>
       </div>
 
@@ -804,7 +804,7 @@
     <!-- MARKET VIEW -->
     <section id="view-market">
       <div class="alert alert-info">
-        <strong>✅ Solo accessi legali</strong> — Pubblica solo spot con permesso ufficiale. Niente coordinate fino all'accordo!
+        <strong>🔒 Sistema sicuro</strong> — Coordinate visibili solo dopo scambio completato e verifica
       </div>
 
       <div class="section-header">
@@ -886,7 +886,7 @@
       <div class="card">
         <div class="form-group">
           <label class="form-label">Cosa offri</label>
-          <input type="text" class="form-input" id="input-give" maxlength="100" placeholder="es. Ex fabbrica tessile con permesso comunale">
+          <input type="text" class="form-input" id="input-give" maxlength="100" placeholder="es. Ex fabbrica tessile">
           <div class="form-hint">Descrizione breve dello spot che offri in scambio</div>
         </div>
 
@@ -919,20 +919,19 @@
         <div class="form-group">
           <label class="form-label">Coordinate GPS</label>
           <input type="text" class="form-input" id="input-coordinates" placeholder="es. 45.4642, 9.1900">
-          <div class="form-hint">⚠️ Saranno visibili SOLO dopo l'accettazione dello scambio e verifica admin</div>
+          <div class="form-hint">⚠️ Saranno visibili SOLO dopo l'accettazione dello scambio e verifica</div>
         </div>
 
         <div class="form-group">
           <label class="form-label">Descrizione</label>
           <textarea class="form-textarea" id="input-description" maxlength="500" placeholder="Descrivi cosa rende speciale questo spot..."></textarea>
-          <div class="form-hint">Info generali. Niente istruzioni per entrare illegalmente</div>
+          <div class="form-hint">Info generali sullo spot</div>
         </div>
 
         <label class="checkbox-label">
           <input type="checkbox" id="input-legal">
           <span>
-            <strong>Confermo</strong> che questo spot ha <strong>accesso legale e consentito</strong> 
-            e fornirò coordinate solo dopo verifica.
+            <strong>Confermo</strong> di avere accordi personali per questo spot e di poterlo scambiare.
           </span>
         </label>
 
@@ -1507,7 +1506,7 @@
       }
 
       if (!legal) {
-        showToast('Devi confermare l\'accesso legale', 'error');
+        showToast('Devi confermare di avere accordi per questo spot', 'error');
         return;
       }
 
@@ -1637,19 +1636,19 @@
       const mySpots = [
         {
           id: generateId(),
-          give: 'Ex fabbrica tessile con permesso comunale',
+          give: 'Ex fabbrica tessile',
           want: 'Hotel o resort abbandonato',
           region: 'Lombardia - Bergamo',
           coordinates: '45.6983, 9.6773',
           category: 'industriale',
-          description: 'Struttura molto fotogenica. Permesso ottenuto dal comune per visite.',
+          description: 'Struttura molto fotogenica con macchinari originali.',
           author: state.user.username,
           status: 'active',
           createdAt: Date.now() - 86400000
         },
         {
           id: generateId(),
-          give: 'Villa liberty con giardino abbandonato',
+          give: 'Villa liberty con giardino',
           want: 'Struttura militare o bunker',
           region: 'Piemonte - Torino',
           coordinates: '45.0703, 7.6869',
@@ -1661,24 +1660,24 @@
         },
         {
           id: generateId(),
-          give: 'Ex caserma militare dismessa',
+          give: 'Ex caserma militare',
           want: 'Hotel di montagna abbandonato',
           region: 'Trentino Alto Adige',
           coordinates: '46.4983, 11.3548',
           category: 'militare',
-          description: 'Struttura militare degli anni 30. Accesso autorizzato.',
+          description: 'Struttura militare degli anni 30 con sotterranei.',
           author: state.user.username,
           status: 'completed',
           createdAt: Date.now() - 345600000
         },
         {
           id: generateId(),
-          give: 'Centrale idroelettrica dismessa',
+          give: 'Centrale idroelettrica',
           want: 'Hotel termale abbandonato',
           region: 'Valle d\'Aosta',
           coordinates: '45.7376, 7.3207',
           category: 'industriale',
-          description: 'Impianto anni 50 con turbine ancora presenti. Accesso sicuro.',
+          description: 'Impianto anni 50 con turbine ancora presenti.',
           author: state.user.username,
           status: 'active',
           createdAt: Date.now() - 777600000
@@ -1689,12 +1688,12 @@
       const marketSpots = [
         {
           id: generateId(),
-          give: 'Sanatorio pubblico visitabile',
+          give: 'Sanatorio abbandonato',
           want: 'Fabbrica o centrale elettrica',
           region: 'Toscana - Firenze',
           coordinates: '43.7696, 11.2558',
           category: 'sanitario',
-          description: 'Area aperta al pubblico, architettura razionalista. Ampio parco.',
+          description: 'Architettura razionalista imponente. Ampio parco circostante.',
           author: 'SpotSeeker',
           status: 'active',
           createdAt: Date.now() - 259200000
@@ -1706,7 +1705,7 @@
           region: 'Liguria - Genova',
           coordinates: '44.4056, 8.9463',
           category: 'hotel',
-          description: 'Hotel con vista mare, strutture ancora intatte. Permesso di accesso.',
+          description: 'Hotel con vista mare, strutture ancora intatte.',
           author: 'CoastalHunter',
           status: 'active',
           createdAt: Date.now() - 432000000
@@ -1725,12 +1724,12 @@
         },
         {
           id: generateId(),
-          give: 'Castello medievale parzialmente restaurato',
+          give: 'Castello medievale',
           want: 'Struttura industriale vintage',
           region: 'Umbria - Perugia',
           coordinates: '43.1107, 12.3908',
           category: 'villa',
-          description: 'Castello del 1400 con torri e sotterranei. Accesso organizzato.',
+          description: 'Castello del 1400 con torri e sotterranei.',
           author: 'HistoryHunter',
           status: 'active',
           createdAt: Date.now() - 604800000
@@ -1742,7 +1741,7 @@
           region: 'Veneto - Venezia',
           coordinates: '45.4408, 12.3155',
           category: 'sanitario',
-          description: 'Struttura fascista imponente. Tour guidati disponibili.',
+          description: 'Struttura fascista imponente con lunghi corridoi.',
           author: 'ArchitectureFan',
           status: 'active',
           createdAt: Date.now() - 691200000
@@ -1766,7 +1765,7 @@
           region: 'Sardegna - Carbonia',
           coordinates: '39.1642, 8.5219',
           category: 'industriale',
-          description: 'Miniera sotterranea con gallerie. Tour organizzati.',
+          description: 'Miniera sotterranea con gallerie estese.',
           author: 'UndergroundPro',
           status: 'active',
           createdAt: Date.now() - 950400000
@@ -1785,7 +1784,7 @@
         },
         {
           id: generateId(),
-          give: 'Ex colonia marina fascista',
+          give: 'Ex colonia marina',
           want: 'Castello o fortezza',
           region: 'Marche - Ancona',
           coordinates: '43.6158, 13.5189',
@@ -1797,7 +1796,7 @@
         },
         {
           id: generateId(),
-          give: 'Ex stazione ferroviaria dismessa',
+          give: 'Ex stazione ferroviaria',
           want: 'Villa con cappella privata',
           region: 'Sicilia - Catania',
           coordinates: '37.5079, 15.0830',
@@ -1826,7 +1825,7 @@
           region: 'Abruzzo - L\'Aquila',
           coordinates: '42.3505, 13.3995',
           category: 'altro',
-          description: 'Monastero con chiostro intatto. Accesso con guida.',
+          description: 'Monastero con chiostro intatto e cripta.',
           author: 'MonasteryExplorer',
           status: 'active',
           createdAt: Date.now() - 1382400000
