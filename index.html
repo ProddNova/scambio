@@ -881,26 +881,44 @@
       overflow:hidden;
     }
     
-    /* Map controls container */
+    /* Map controls container - FIXED FOR MOBILE */
     .map-controls-container {
       display:flex;
       flex-wrap:wrap;
-      gap:8px;
+      gap:6px;
       justify-content:center;
-      padding:12px 0;
+      padding:10px;
       margin-top:0;
       background:var(--card);
       border-top:1px solid var(--border);
       position:relative;
       z-index:10;
+      overflow:hidden;
     }
     
     .map-controls-container .btn {
-      padding:8px 12px;
+      padding:8px 10px;
       font-size:12px;
       flex:1;
-      min-width:120px;
-      max-width:150px;
+      min-width:140px;
+      max-width:180px;
+      white-space:nowrap;
+    }
+    
+    /* Map controls grid layout */
+    .map-controls-grid {
+      display:grid;
+      grid-template-columns:repeat(2, 1fr);
+      gap:6px;
+      width:100%;
+    }
+    
+    .map-controls-grid .btn {
+      width:100%;
+      min-width:0;
+      max-width:100%;
+      padding:8px 6px;
+      font-size:11px;
     }
 
     /* PROFILE STATS */
@@ -1149,9 +1167,9 @@
       
       /* MAP FIXES FOR MOBILE */
       .map-container {
-        height:70vh !important;
+        height:65vh !important;
         min-height:400px;
-        max-height:600px;
+        max-height:500px;
         margin-bottom:0;
         border-radius:8px;
         overflow:hidden;
@@ -1174,17 +1192,24 @@
         font-size:18px !important;
       }
       
+      /* Map controls for tablet */
       .map-controls-container {
-        padding:10px 0;
+        padding:10px;
         gap:6px;
+        flex-wrap:wrap;
       }
       
       .map-controls-container .btn {
-        padding:8px 10px;
+        padding:8px 8px;
         font-size:11px;
-        min-width:100px;
-        max-width:130px;
+        min-width:calc(50% - 8px);
+        max-width:calc(50% - 8px);
         flex:1 1 auto;
+      }
+      
+      .map-controls-grid {
+        grid-template-columns:repeat(2, 1fr);
+        gap:6px;
       }
       
       .profile-stats{
@@ -1266,9 +1291,9 @@
       
       /* MAP FIXES FOR SMALL MOBILE */
       .map-container {
-        height:65vh !important;
+        height:60vh !important;
         min-height:350px;
-        max-height:500px;
+        max-height:450px;
       }
       
       #map {
@@ -1279,16 +1304,25 @@
         min-height:300px;
       }
       
+      /* Map controls for small mobile - FIXED */
       .map-controls-container {
         flex-direction:column;
         align-items:stretch;
         gap:6px;
+        padding:8px;
       }
       
       .map-controls-container .btn {
-        min-width:100%;
-        max-width:100%;
-        padding:10px;
+        min-width:100% !important;
+        max-width:100% !important;
+        padding:10px 8px;
+        font-size:11px;
+        width:100%;
+      }
+      
+      .map-controls-grid {
+        grid-template-columns:1fr;
+        gap:6px;
       }
       
       .leaflet-popup-content-wrapper {
@@ -1304,7 +1338,7 @@
     
     @media (max-width:320px){
       .map-container {
-        height:60vh !important;
+        height:55vh !important;
         min-height:300px;
       }
       
@@ -1314,6 +1348,15 @@
       
       .leaflet-container {
         min-height:250px;
+      }
+      
+      .map-controls-container {
+        padding:6px;
+      }
+      
+      .map-controls-container .btn {
+        padding:8px 6px;
+        font-size:10px;
       }
     }
 
@@ -1722,7 +1765,7 @@
 
   <script>
     // ========== CONSTANTS ==========
-    const STORAGE_KEY = 'spotswap_v10';
+    const STORAGE_KEY = 'spotswap_v11';
     const VERIFICATION_TIME = 10000; // 10 seconds
 
     // ========== STATE ==========
@@ -1759,15 +1802,6 @@
       showView('market');
       updateUI();
       startVerificationChecker();
-      
-      // Inizializza la mappa se il tab è attivo (per mobile)
-      if (window.innerWidth <= 768) {
-        setTimeout(() => {
-          if (document.getElementById('view-my-spots') && !document.getElementById('view-my-spots').classList.contains('hidden')) {
-            initMap();
-          }
-        }, 500);
-      }
     }
 
     // ========== STORAGE ==========
